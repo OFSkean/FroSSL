@@ -28,7 +28,7 @@ data:
   num_workers: 4
 optimizer:
   name: "lars"
-  batch_size: 64
+  batch_size: 56
   lr: 0.8
   classifier_lr: 0.1
   weight_decay: 1.5e-6
@@ -47,7 +47,7 @@ auto_resume:
 
 # overwrite PL stuff
 max_epochs: 100
-devices: [0, 1, 2, 3]
+devices: [0, 1]
 sync_batchnorm: True
 accelerator: "gpu"
 strategy: "ddp"

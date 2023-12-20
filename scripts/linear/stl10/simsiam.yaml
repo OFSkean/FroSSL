@@ -1,6 +1,5 @@
 defaults:
   - _self_
-  - augmentations: symmetric.yaml
   - wandb: private.yaml
   - override hydra/hydra_logging: disabled
   - override hydra/job_logging: disabled
@@ -11,41 +10,34 @@ hydra:
   run:
     dir: .
 
-name: "simclr-cifar10-3temp" # change here for cifar100
-method: "simclr"
+name: "simsiam-stl10-linear"
+pretrained_feature_extractor: "/home/AD/ofsk222/Research/clones/solo-learn/trained_models/stl10_models/simsiam-stl10-zalllgem-ep=499.ckpt"
 backbone:
   name: "resnet18"
-method_kwargs:
-  proj_hidden_dim: 2048
-  proj_output_dim: 128
-  temperature: 0.3
+pretrain_method: "simsiam"
 data:
-  dataset: cifar10 # change here for cifar100
-  train_path: "./datasets"
-  val_path: "./datasets"
+  dataset: stl10
+  train_path: "./datasets/stl10"
+  val_path: "./datasets/stl10"
   format: "image_folder"
-  num_workers: 4
+  num_workers: 8
 optimizer:
-  name: "lars"
+  name: "sgd"
   batch_size: 256
   lr: 0.3
-  classifier_lr: 0.1
-  weight_decay: 1e-4
-  kwargs:
-    clip_lr: True
-    eta: 0.02
-    exclude_bias_n_norm: True
+  weight_decay: 0
 scheduler:
-  name: "warmup_cosine"
+  name: "step"
+  lr_decay_steps: [60, 80]
 checkpoint:
   enabled: True
   dir: "trained_models"
   frequency: 1
 auto_resume:
-  enabled: True
+  enabled: False
 
 # overwrite PL stuff
-max_epochs: 1000
+max_epochs: 100
 devices: [0]
 sync_batchnorm: True
 accelerator: "gpu"

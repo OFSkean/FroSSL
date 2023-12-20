@@ -1,6 +1,6 @@
 defaults:
   - _self_
-  - augmentations: symmetric.yaml
+  - augmentations: asymmetric.yaml
   - wandb: private.yaml
   - override hydra/hydra_logging: disabled
   - override hydra/job_logging: disabled
@@ -11,26 +11,29 @@ hydra:
   run:
     dir: .
 
-name: "simclr-cifar10-3temp" # change here for cifar100
-method: "simclr"
+name: "dino-stl10" # change here for cifar100
+method: "dino"
 backbone:
   name: "resnet18"
 method_kwargs:
   proj_hidden_dim: 2048
-  proj_output_dim: 128
-  temperature: 0.3
+  proj_output_dim: 256
+  num_prototypes: 4096
+momentum:
+  base_tau: 0.9995
+  final_tau: 1.0
 data:
   dataset: cifar10 # change here for cifar100
   train_path: "./datasets"
   val_path: "./datasets"
   format: "image_folder"
-  num_workers: 4
+  num_workers: 8
 optimizer:
   name: "lars"
   batch_size: 256
   lr: 0.3
   classifier_lr: 0.1
-  weight_decay: 1e-4
+  weight_decay: 1e-6
   kwargs:
     clip_lr: True
     eta: 0.02
@@ -45,7 +48,7 @@ auto_resume:
   enabled: True
 
 # overwrite PL stuff
-max_epochs: 1000
+max_epochs: 500
 devices: [0]
 sync_batchnorm: True
 accelerator: "gpu"

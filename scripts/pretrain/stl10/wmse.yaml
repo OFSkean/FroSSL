@@ -11,43 +11,42 @@ hydra:
   run:
     dir: .
 
-name: "simclr-cifar10-3temp" # change here for cifar100
-method: "simclr"
+name: "wmse-stl10" # change here for cifar100
+method: "wmse"
 backbone:
   name: "resnet18"
 method_kwargs:
-  proj_hidden_dim: 2048
+  proj_hidden_dim: 1024
   proj_output_dim: 128
-  temperature: 0.3
+  whitening_size: 256
+  whitening_iters: 4
 data:
-  dataset: cifar10 # change here for cifar100
-  train_path: "./datasets"
-  val_path: "./datasets"
+  dataset: stl10 # change here for cifar100
+  train_path: "./datasets/stl10"
+  val_path: "./datasets/stl10"
   format: "image_folder"
-  num_workers: 4
+  num_workers: 8
 optimizer:
   name: "lars"
   batch_size: 256
-  lr: 0.3
+  lr: 0.1
   classifier_lr: 0.1
   weight_decay: 1e-4
-  kwargs:
-    clip_lr: True
-    eta: 0.02
-    exclude_bias_n_norm: True
 scheduler:
   name: "warmup_cosine"
+  warmup_start_lr: 0.1
+  warmup_epochs: 0
 checkpoint:
   enabled: True
   dir: "trained_models"
   frequency: 1
 auto_resume:
-  enabled: True
+  enabled: False
 
 # overwrite PL stuff
-max_epochs: 1000
+max_epochs: 500
 devices: [0]
 sync_batchnorm: True
 accelerator: "gpu"
 strategy: "ddp"
-precision: 16
+precision: 32

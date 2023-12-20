@@ -1,6 +1,6 @@
 defaults:
   - _self_
-  - augmentations: symmetric.yaml
+  - augmentations: symmetric_weak.yaml
   - wandb: private.yaml
   - override hydra/hydra_logging: disabled
   - override hydra/job_logging: disabled
@@ -11,16 +11,20 @@ hydra:
   run:
     dir: .
 
-name: "simclr-cifar10-3temp" # change here for cifar100
-method: "simclr"
+name: "mocov2plus-stl10" # change here for cifar100
+method: "mocov2plus"
 backbone:
   name: "resnet18"
 method_kwargs:
   proj_hidden_dim: 2048
-  proj_output_dim: 128
-  temperature: 0.3
+  proj_output_dim: 256
+  queue_size: 32768
+  temperature: 0.2
+momentum:
+  base_tau: 1.0
+  final_tau: 1.0
 data:
-  dataset: cifar10 # change here for cifar100
+  dataset: stl10 # change here for cifar100
   train_path: "./datasets"
   val_path: "./datasets"
   format: "image_folder"
@@ -29,12 +33,8 @@ optimizer:
   name: "lars"
   batch_size: 256
   lr: 0.3
-  classifier_lr: 0.1
+  classifier_lr: 0.3
   weight_decay: 1e-4
-  kwargs:
-    clip_lr: True
-    eta: 0.02
-    exclude_bias_n_norm: True
 scheduler:
   name: "warmup_cosine"
 checkpoint:
@@ -42,10 +42,10 @@ checkpoint:
   dir: "trained_models"
   frequency: 1
 auto_resume:
-  enabled: True
+  enabled: False
 
 # overwrite PL stuff
-max_epochs: 1000
+max_epochs: 500
 devices: [0]
 sync_batchnorm: True
 accelerator: "gpu"

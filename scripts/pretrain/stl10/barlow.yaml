@@ -11,20 +11,20 @@ hydra:
   run:
     dir: .
 
-name: "simclr-cifar10-3temp" # change here for cifar100
-method: "simclr"
+name: "barlow_twins-stl10" # change here for cifar100
+method: "barlow_twins"
 backbone:
   name: "resnet18"
 method_kwargs:
   proj_hidden_dim: 2048
-  proj_output_dim: 128
-  temperature: 0.3
+  proj_output_dim: 2048
+  scale_loss: 0.1
 data:
-  dataset: cifar10 # change here for cifar100
+  dataset: stl10 # change here for cifar100
   train_path: "./datasets"
   val_path: "./datasets"
   format: "image_folder"
-  num_workers: 4
+  num_workers: 8
 optimizer:
   name: "lars"
   batch_size: 256
@@ -45,9 +45,9 @@ auto_resume:
   enabled: True
 
 # overwrite PL stuff
-max_epochs: 1000
+max_epochs: 500
 devices: [0]
 sync_batchnorm: True
 accelerator: "gpu"
 strategy: "ddp"
-precision: 16
+precision: 32

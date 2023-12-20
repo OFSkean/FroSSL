@@ -1,6 +1,6 @@
 defaults:
   - _self_
-  - augmentations: symmetric.yaml
+  - augmentations: asymmetric.yaml
   - wandb: private.yaml
   - override hydra/hydra_logging: disabled
   - override hydra/job_logging: disabled
@@ -11,24 +11,29 @@ hydra:
   run:
     dir: .
 
-name: "simclr-cifar10-3temp" # change here for cifar100
-method: "simclr"
+name: "corinfomax-stl10" # change here for cifar100
+method: "corinfomax"
 backbone:
   name: "resnet18"
 method_kwargs:
   proj_hidden_dim: 2048
-  proj_output_dim: 128
-  temperature: 0.3
+  proj_output_dim: 64
+  R_ini: 1.0          # coefficient of initial covariance
+  la_R: 1e-2         # forgetting factor for covariance
+  la_mu: 1e-2        # forgetting factor for mean
+  R_eps_weight: 1e-8 # diagonal perturbation factor of covariance matrix R1
+  alpha_tradeoff: 500 # tradeoff coefficient for invariance loss
+
 data:
-  dataset: cifar10 # change here for cifar100
-  train_path: "./datasets"
-  val_path: "./datasets"
+  dataset: stl10 # change here for cifar100
+  train_path: "./datasets/stl10"
+  val_path: "./datasets/stl10"
   format: "image_folder"
   num_workers: 4
 optimizer:
   name: "lars"
   batch_size: 256
-  lr: 0.3
+  lr: 0.5
   classifier_lr: 0.1
   weight_decay: 1e-4
   kwargs:
@@ -45,9 +50,9 @@ auto_resume:
   enabled: True
 
 # overwrite PL stuff
-max_epochs: 1000
+max_epochs: 500
 devices: [0]
 sync_batchnorm: True
 accelerator: "gpu"
 strategy: "ddp"
-precision: 16
+precision: 32
