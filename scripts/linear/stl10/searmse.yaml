@@ -11,7 +11,7 @@ hydra:
     dir: .
 
 name: "searmse-stl10-linear"
-pretrained_feature_extractor: "/home/AD/ofsk222/Research/clones/solo-learn/trained_models/stl10_models/searmse-stl10-rynz0sgg-ep=499.ckpt"
+pretrained_feature_extractor: None
 backbone:
   name: "resnet18"
 pretrain_method: "searmse"

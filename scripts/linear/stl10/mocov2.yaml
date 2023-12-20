@@ -17,8 +17,8 @@ backbone:
 pretrain_method: "mocov2"
 data:
   dataset: stl10
-  train_path: "./datasets/stl10"
-  val_path: "./datasets/stl10"
+  train_path: "./datasets"
+  val_path: "./datasets"
   format: "image_folder"
   num_workers: 8
 optimizer:
@@ -42,4 +42,4 @@ devices: [0]
 sync_batchnorm: True
 accelerator: "gpu"
 strategy: "ddp"
-precision: 16
+precision: 16-mixed
