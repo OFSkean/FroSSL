@@ -69,6 +69,13 @@ def main(cfg: DictConfig):
             backbone.maxpool = nn.Identity()
 
     ckpt_path = cfg.pretrained_feature_extractor
+    # if no path, read a path from the last_ckpt file
+    if ckpt_path == "None" or ckpt_path == None or ckpt_path == '':
+        with open("last_ckpt.txt", "r") as f:
+            ckpt_path = f.read().strip()
+        # delete last_ckpt file
+        os.remove("last_ckpt.txt")
+    print(ckpt_path)
     assert ckpt_path.endswith(".ckpt") or ckpt_path.endswith(".pth") or ckpt_path.endswith(".pt")
 
     state = torch.load(ckpt_path, map_location="cpu")["state_dict"]

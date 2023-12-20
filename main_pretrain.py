@@ -233,6 +233,12 @@ def main(cfg: DictConfig):
     else:
         trainer.fit(model, train_loader, val_loader, ckpt_path=ckpt_path)
 
+    # make an environment variable with the path
+    # so that we can use it for the linear run
+    if cfg.checkpoint.enabled:
+        # save ckpt name to file
+        with open("last_ckpt.txt", "w") as f:
+            f.write(str(ckpt.last_ckpt))
 
 if __name__ == "__main__":
     main()
