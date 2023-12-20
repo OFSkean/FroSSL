@@ -379,6 +379,58 @@ class LinearModel(pl.LightningModule):
         }
         self.validation_step_outputs.append(metrics)
         return metrics
+    
+    def test_step(
+        self,
+        batch: List[torch.Tensor],
+        batch_idx: int,
+        dataloader_idx: int = None,
+        update_validation_step_outputs: bool = True,
+    ) -> Dict[str, Any]:
+        """Validation step for pytorch lightning. It does all the shared operations, such as
+        forwarding a batch of images, computing logits and computing metrics.
+
+        Args:
+            batch (List[torch.Tensor]):a batch of data in the format of [img_indexes, X, Y].
+            batch_idx (int): index of the batch.
+            update_validation_step_outputs (bool): whether or not to append the
+                metrics to validation_step_outputs
+
+        Returns:
+            Dict[str, Any]: dict with the batch_size (used for averaging), the classification loss
+                and accuracies.
+        """
+
+        X, targets = batch
+        batch_size = targets.size(0)
+
+        out = self.shared_step(batch, batch_idx)
+
+        metrics = {
+            "batch_size": batch_size,
+            "test_loss": out["loss"],
+            "test_acc1": out["acc1"],
+            "test_acc5": out["acc5"],
+        }
+        if update_validation_step_outputs:
+            self.validation_step_outputs.append(metrics)
+        return metrics
+
+    def on_test_epoch_end(self):
+        """Averages the losses and accuracies of all the validation batches.
+        This is needed because the last batch can be smaller than the others,
+        slightly skewing the metrics.
+        """
+
+        test_loss = weighted_mean(self.validation_step_outputs, "test_loss", "batch_size")
+        test_acc1 = weighted_mean(self.validation_step_outputs, "test_acc1", "batch_size")
+        test_acc5 = weighted_mean(self.validation_step_outputs, "test_acc5", "batch_size")
+
+        log = {"test_loss": test_loss, "test_acc1": test_acc1, "test_acc5": test_acc5}
+
+        self.log_dict(log, sync_dist=True)
+
+        self.validation_step_outputs.clear()
 
     def on_validation_epoch_end(self):
         """Averages the losses and accuracies of all the validation batches.

@@ -151,6 +151,26 @@ class WMSE(BaseMethod):
                     num_losses += 1
         wmse_loss /= num_losses
 
+
+        # ---- compute eigenvalues
+        if self.global_step < 2500 == 0:
+            all_z_a = out["z"][0]
+            centered_a = all_z_a - all_z_a.mean(dim=0)
+            centered_covariance = (centered_a @ centered_a.T)
+
+            cov_eigs = torch.linalg.eigvalsh(centered_covariance + 1e-3 * torch.eye(centered_covariance.shape[0], device=centered_covariance.device))
+            sorted_eigs = torch.sort(cov_eigs, descending=True).values
+
+            logging_dict = {
+                f'cov_eig_{i}': sorted_eigs[i] for i in range(20)
+            }
+            logging_dict['step'] = self.global_step
+
+            # oterate through dict and log
+            for key, value in logging_dict.items():
+                self.log(key, value, sync_dist=True)
+
+
         self.log("train_wmse_loss", wmse_loss, on_epoch=True, sync_dist=True)
 
         return wmse_loss + class_loss

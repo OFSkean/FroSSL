@@ -593,6 +593,7 @@ class BaseMethod(pl.LightningModule):
             self.validation_step_outputs.append(metrics)
         return metrics
 
+   
     def on_validation_epoch_end(self):
         """Averages the losses and accuracies of all the validation batches.
         This is needed because the last batch can be smaller than the others,
@@ -612,6 +613,8 @@ class BaseMethod(pl.LightningModule):
         self.log_dict(log, sync_dist=True)
 
         self.validation_step_outputs.clear()
+
+    
 
 
 class BaseMomentumMethod(BaseMethod):

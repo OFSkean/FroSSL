@@ -20,6 +20,7 @@
 from solo.methods.barlow_twins import BarlowTwins
 from solo.methods.base import BaseMethod
 from solo.methods.byol import BYOL
+from solo.methods.corinfomax import CorInfoMax
 from solo.methods.deepclusterv2 import DeepClusterV2
 from solo.methods.dino import DINO
 from solo.methods.linear import LinearModel
@@ -37,14 +38,18 @@ from solo.methods.swav import SwAV
 from solo.methods.vibcreg import VIbCReg
 from solo.methods.vicreg import VICReg
 from solo.methods.wmse import WMSE
+from solo.methods.sear import SEAR
+from solo.methods.searmse import SEARMSE
 
 METHODS = {
     # base classes
     "base": BaseMethod,
     "linear": LinearModel,
+
     # methods
     "barlow_twins": BarlowTwins,
     "byol": BYOL,
+    "corinfomax": CorInfoMax,
     "deepclusterv2": DeepClusterV2,
     "dino": DINO,
     "mae": MAE,
@@ -54,6 +59,8 @@ METHODS = {
     "nnclr": NNCLR,
     "nnsiam": NNSiam,
     "ressl": ReSSL,
+    "sear": SEAR,
+    "searmse": SEARMSE,
     "simclr": SimCLR,
     "simsiam": SimSiam,
     "supcon": SupCon,
@@ -62,10 +69,12 @@ METHODS = {
     "vicreg": VICReg,
     "wmse": WMSE,
 }
+
 __all__ = [
     "BarlowTwins",
     "BYOL",
     "BaseMethod",
+    "CorInfoMax",
     "DeepClusterV2",
     "DINO",
     "MAE",
@@ -76,6 +85,8 @@ __all__ = [
     "NNCLR",
     "NNSiam",
     "ReSSL",
+    "SEAR",
+    "SEARMSE"
     "SimCLR",
     "SimSiam",
     "SupCon",

@@ -194,5 +194,5 @@ class MoCoV2Plus(BaseMomentumMethod):
         self._dequeue_and_enqueue(keys)
 
         self.log("train_nce_loss", nce_loss, on_epoch=True, sync_dist=True)
-
+        
         return nce_loss + class_loss
