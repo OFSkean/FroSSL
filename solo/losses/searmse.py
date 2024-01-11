@@ -1,12 +1,13 @@
 
+from typing import Any, List, Sequence, Dict
 import torch
-
 import torch.distributed as dist
 
 import repitl.kernel_utils as ku
 import repitl.matrix_itl as itl
 import repitl.difference_of_entropies as dent
 
+# two view loss
 def searmse_loss_func(
     z_a: torch.Tensor, z_b: torch.Tensor, kernel_type: str, alpha: float,
 ) -> torch.Tensor:
@@ -43,3 +44,49 @@ def searmse_loss_func(
     loss = -mse_loss + obj_entropy
 
     return -loss
+
+# multi-view loss. same as above but with multiple views
+def mutliview_searmse_loss_func(
+    z_list: List[torch.Tensor], entropy_weight=1
+) -> torch.Tensor:
+    
+    N = z_list[0].size(0)
+    D = z_list[1].size(1)
+
+    # normalize repr. along the batch dimension
+    normalized_z_list = []
+    for z in z_list:
+        normalized_z = (z - z.mean(0)) / z.std(0) # NxD
+        normalized_z =  (D**0.5) * normalized_z / torch.norm(normalized_z, dim=0)  # scale down to sqrt(d) sphere
+        normalized_z_list.append(normalized_z)
+
+    average_embedding = torch.mean(torch.stack(normalized_z_list), dim=0)
+
+    average_only = False
+    if average_only:
+        total_loss = 0
+        if N > D:
+            cov = (average_embedding.T @ average_embedding) / N
+        else:
+            cov = (average_embedding @ average_embedding.T) / N
+
+        entropy_loss = itl.matrixAlphaEntropy(cov, alpha=2)
+        total_loss -= entropy_loss
+        
+    else:
+        total_loss = 0
+        for view_idx in range(len(normalized_z_list)):
+            view_embeddings = normalized_z_list[view_idx]
+
+            if N > D:
+                cov = (view_embeddings.T @ view_embeddings) / N
+            else:
+                cov = (view_embeddings @ view_embeddings.T) / N
+
+            entropy_loss = entropy_weight*itl.matrixAlphaEntropy(cov, alpha=2)
+            invariance_loss = torch.nn.MSELoss()(view_embeddings, average_embedding)
+            view_loss = -entropy_loss + invariance_loss
+
+            total_loss += view_loss
+
+    return total_loss

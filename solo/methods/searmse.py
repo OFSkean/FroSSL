@@ -1,12 +1,12 @@
-from typing import Any, List, Sequence
+from typing import Any, List, Sequence, Dict
 
 import omegaconf
 import torch
 import torch.nn as nn
-from solo.losses.searmse import searmse_loss_func
+from solo.losses.searmse import searmse_loss_func, mutliview_searmse_loss_func
 from solo.methods.base import BaseMethod
 from solo.utils.misc import omegaconf_select
-
+import torch.nn.functional as F
 
 class SEARMSE(BaseMethod):
     def __init__(self, cfg: omegaconf.DictConfig):
@@ -85,7 +85,22 @@ class SEARMSE(BaseMethod):
         z = self.projector(out["feats"])
         out.update({"z": z})
         return out
+    
 
+    def multicrop_forward(self, X: torch.Tensor) -> Dict[str, Any]:
+        """Performs the forward pass of the backbone, the projector and the prototypes.
+
+        Args:
+            X (torch.Tensor): a batch of images in the tensor format.
+
+        Returns:
+            Dict[str, Any]:
+                a dict containing the outputs of the parent,
+                the projected features and the logits.
+        """
+
+        raise NotImplementedError("SEARMSE does not support multi-crop forward")
+    
     def training_step(self, batch: Sequence[Any], batch_idx: int) -> torch.Tensor:
         """Training step for SEARMSE reusing BaseMethod training step.
 
@@ -100,10 +115,12 @@ class SEARMSE(BaseMethod):
 
         out = super().training_step(batch, batch_idx)
         class_loss = out["loss"]
-        z1, z2 = out["z"]
+        z = out["z"]
 
-        searmse_loss = searmse_loss_func(z1, z2, kernel_type=self.kernel_type, alpha=self.alpha)
+        entropy_weight = max(0.2, 1 - (self.trainer.current_epoch / self.trainer.max_epochs))
+        self.log("entropy_weight", entropy_weight, on_epoch=True, sync_dist=True)
 
+        searmse_loss = mutliview_searmse_loss_func(z, entropy_weight=entropy_weight)
         self.log("train_searmse_loss", searmse_loss, on_epoch=True, sync_dist=True)
         
         return searmse_loss + class_loss
