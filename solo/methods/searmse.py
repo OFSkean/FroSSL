@@ -24,6 +24,7 @@ class SEARMSE(BaseMethod):
 
         self.alpha: float = cfg.method_kwargs.alpha
         self.kernel_type: str = cfg.method_kwargs.kernel_type
+        self.entropy_cutoff: float = cfg.method_kwargs.entropy_cutoff
 
         proj_hidden_dim: int = cfg.method_kwargs.proj_hidden_dim
         proj_output_dim: int = cfg.method_kwargs.proj_output_dim
@@ -57,6 +58,7 @@ class SEARMSE(BaseMethod):
 
         cfg.method_kwargs.alpha = omegaconf_select(cfg, "method_kwargs.alpha", 1.01)
         cfg.method_kwargs.kernel_type = omegaconf_select(cfg, "method_kwargs.scale_loss", "linear")
+        cfg.method_kwargs.entropy_cutoff = omegaconf_select(cfg, "method_kwargs.entropy_cutoff", 0.2)
 
         return cfg
 
@@ -117,7 +119,7 @@ class SEARMSE(BaseMethod):
         class_loss = out["loss"]
         z = out["z"]
 
-        entropy_weight = max(0.2, 1 - (self.trainer.current_epoch / self.trainer.max_epochs))
+        entropy_weight = max(self.entropy_cutoff, 1 - (self.trainer.current_epoch / self.trainer.max_epochs))
         self.log("entropy_weight", entropy_weight, on_epoch=True, sync_dist=True)
 
         searmse_loss = mutliview_searmse_loss_func(z, entropy_weight=entropy_weight)
