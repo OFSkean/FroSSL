@@ -88,21 +88,6 @@ class SEARMSE(BaseMethod):
         out.update({"z": z})
         return out
     
-
-    def multicrop_forward(self, X: torch.Tensor) -> Dict[str, Any]:
-        """Performs the forward pass of the backbone, the projector and the prototypes.
-
-        Args:
-            X (torch.Tensor): a batch of images in the tensor format.
-
-        Returns:
-            Dict[str, Any]:
-                a dict containing the outputs of the parent,
-                the projected features and the logits.
-        """
-
-        raise NotImplementedError("SEARMSE does not support multi-crop forward")
-    
     def training_step(self, batch: Sequence[Any], batch_idx: int) -> torch.Tensor:
         """Training step for SEARMSE reusing BaseMethod training step.
 

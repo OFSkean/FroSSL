@@ -20,13 +20,14 @@ method_kwargs:
   proj_output_dim: 1024
   alpha: 2
   kernel_type: "linear"
+  entropy_cutoff: 0.4
 
 data:
   dataset: stl10 # change here for cifar100
   train_path: "./datasets/stl10"
   val_path: "./datasets/stl10"
   format: "image_folder"
-  num_workers: 8
+  num_workers: 16
 optimizer:
   name: "lars"
   batch_size: 256
