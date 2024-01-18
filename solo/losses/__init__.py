@@ -35,6 +35,7 @@ from solo.losses.wmse import wmse_loss_func
 from solo.losses.sear import sear_loss_func
 from solo.losses.searmse import searmse_loss_func
 from solo.losses.corinfomax import CorInfoMax_Loss
+from solo.losses.mmcr import maximum_manifold_capacity
 
 __all__ = [
     "barlow_loss_func",
@@ -43,6 +44,7 @@ __all__ = [
     "CorInfoMax_Loss"
     "DINOLoss",
     "mae_loss_func",
+    "maximum_manifold_capacity"
     "mocov2plus_loss_func",
     "mocov3_loss_func",
     "nnclr_loss_func",

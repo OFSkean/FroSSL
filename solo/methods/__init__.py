@@ -25,6 +25,7 @@ from solo.methods.deepclusterv2 import DeepClusterV2
 from solo.methods.dino import DINO
 from solo.methods.linear import LinearModel
 from solo.methods.mae import MAE
+from solo.methods.mmcr import MMCR
 from solo.methods.mocov2plus import MoCoV2Plus
 from solo.methods.mocov3 import MoCoV3
 from solo.methods.nnbyol import NNBYOL
@@ -53,6 +54,7 @@ METHODS = {
     "deepclusterv2": DeepClusterV2,
     "dino": DINO,
     "mae": MAE,
+    "mmcr": MMCR,
     "mocov2plus": MoCoV2Plus,
     "mocov3": MoCoV3,
     "nnbyol": NNBYOL,
@@ -78,6 +80,7 @@ __all__ = [
     "DeepClusterV2",
     "DINO",
     "MAE",
+    "MMCR"
     "LinearModel",
     "MoCoV2Plus",
     "MoCoV3",
