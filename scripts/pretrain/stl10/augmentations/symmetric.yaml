@@ -19,4 +19,4 @@
   horizontal_flip:
     prob: 0.5
   crop_size: 96
-  num_crops: 4
+  num_crops: 8

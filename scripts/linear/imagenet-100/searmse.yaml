@@ -10,21 +10,21 @@ hydra:
   run:
     dir: .
 
-name: "searmse-stl10-linear"
+name: "frossl-imagenet100-linear"
 pretrained_feature_extractor: None
 backbone:
   name: "resnet18"
-pretrain_method: "searmse"
+pretrain_method: "barlow_twins"
 data:
-  dataset: stl10
-  train_path: "./datasets/stl10"
-  val_path: "./datasets/stl10"
-  format: "image_folder"
-  num_workers: 8
+  dataset: imagenet100
+  train_path: "./datasets/imagenet100/train"
+  val_path: "./datasets/imagenet100/val"
+  format: "dali"
+  num_workers: 16
 optimizer:
   name: "sgd"
   batch_size: 256
-  lr: 0.3
+  lr: 0.1
   weight_decay: 0
 scheduler:
   name: "step"
@@ -34,7 +34,7 @@ checkpoint:
   dir: "trained_models"
   frequency: 1
 auto_resume:
-  enabled: False
+  enabled: True
 
 # overwrite PL stuff
 max_epochs: 100
