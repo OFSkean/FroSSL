@@ -763,6 +763,7 @@ class PretrainDALIDataModule(pl.LightningDataModule):
 
     def setup(self, stage: Optional[str] = None):
         # extra info about training
+        print("Setting up DALI pipeline")
         self.device_id = self.trainer.local_rank
         self.shard_id = self.trainer.global_rank
         self.num_shards = self.trainer.world_size

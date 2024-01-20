@@ -104,10 +104,16 @@ class SEARMSE(BaseMethod):
         class_loss = out["loss"]
         z = out["z"]
 
-        entropy_weight = max(self.entropy_cutoff, 1 - (self.trainer.current_epoch / self.trainer.max_epochs))
+        entropy_weight = self.entropy_cutoff
         self.log("entropy_weight", entropy_weight, on_epoch=True, sync_dist=True)
 
-        searmse_loss = mutliview_searmse_loss_func(z, entropy_weight=entropy_weight)
-        self.log("train_searmse_loss", searmse_loss, on_epoch=True, sync_dist=True)
+        if len(z) == 2:
+            z1 = z[0]
+            z2 = z[1]
+            searmse_loss = searmse_loss_func(z1, z2, kernel_type=self.kernel_type, alpha=self.alpha, entropy_weight=entropy_weight, logger=self.log)
+        else:
+            searmse_loss = mutliview_searmse_loss_func(z, entropy_weight=entropy_weight, logger=self.log)
+            
+        # self.log("train_searmse_loss", searmse_loss, on_epoch=True, sync_dist=True)
         
         return searmse_loss + class_loss

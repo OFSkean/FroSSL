@@ -9,7 +9,7 @@ import repitl.difference_of_entropies as dent
 
 # two view loss
 def searmse_loss_func(
-    z_a: torch.Tensor, z_b: torch.Tensor, kernel_type: str, alpha: float,
+    z_a: torch.Tensor, z_b: torch.Tensor, kernel_type: str, alpha: float, entropy_weight=1, logger=None
 ) -> torch.Tensor:
     # normalize repr. along the batch dimension
     z_a = (z_a - z_a.mean(0)) / z_a.std(0) # NxD
@@ -41,13 +41,17 @@ def searmse_loss_func(
     ent_Kb = itl.matrixAlphaEntropy(Kb, alpha=alpha)
     obj_entropy = ent_Ka + ent_Kb
 
-    loss = -mse_loss + obj_entropy
+    loss = -mse_loss + obj_entropy*entropy_weight
+
+    if logger is not None:
+        logger(f"entropy", obj_entropy, on_epoch=True, sync_dist=True)
+        logger(f"invariance", mse_loss, on_epoch=True, sync_dist=True)
 
     return -loss
 
 # multi-view loss. same as above but with multiple views
 def mutliview_searmse_loss_func(
-    z_list: List[torch.Tensor], entropy_weight=1
+    z_list: List[torch.Tensor], entropy_weight=1, logger=None
 ) -> torch.Tensor:
     
     N = z_list[0].size(0)
@@ -84,9 +88,13 @@ def mutliview_searmse_loss_func(
                 cov = (view_embeddings @ view_embeddings.T) / N
 
             entropy_loss = entropy_weight*itl.matrixAlphaEntropy(cov, alpha=2)
+
             invariance_loss = torch.nn.MSELoss()(view_embeddings, average_embedding)
             view_loss = -entropy_loss + invariance_loss
-
             total_loss += view_loss
+
+            if logger is not None:
+                logger(f"entropy_{view_idx}", entropy_loss, on_epoch=True, sync_dist=True)
+                logger(f"invariance_{view_idx}", invariance_loss, on_epoch=True, sync_dist=True)
 
     return total_loss
