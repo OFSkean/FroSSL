@@ -1,5 +1,5 @@
-tradeoffs=(0.4 0.5 0.6 0.7 0.8 0.9)
-wandbids=("46s9gri0"  "3id6g480" "5xcmrkqt" "zro7mcf5" "ay26etu2" "c7iawwla")
+tradeoffs=(0.4 0.5 0.6 0.7 0.8 0.9 1.0)
+wandbids=("olzjv7fn"  "lazu0b2i" "4h3ncy2b" "kimbyiui" "u0y89p6w" "wil8ivaf" "cb2qicbn")
 model_folder_name="8view_constant_sweep"
 folder_prefix="constant-"
 
@@ -9,7 +9,7 @@ arraylength=${#tradeoffs[@]}
 
 for (( i=0; i<${arraylength}; i++ ));
 do
-    experiment_name="frossl-4view-constant-${tradeoffs[i]}"
+    experiment_name="frossl-8view-constant-${tradeoffs[i]}"
 
     lcc_baseline_folder="/home/ofsk222/projects/frossl/solo-learn/trained_models/searmse/${wandbids[i]}"
     new_folder_name="trained_models/${model_folder_name}/$folder_prefix${tradeoffs[i]}"

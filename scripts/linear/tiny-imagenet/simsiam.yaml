@@ -1,0 +1,44 @@
+defaults:
+  - _self_
+  - wandb: private.yaml
+  - override hydra/hydra_logging: disabled
+  - override hydra/job_logging: disabled
+
+# disable hydra outputs
+hydra:
+  output_subdir: null
+  run:
+    dir: .
+
+name: "simsiam-tiny-linear"
+backbone:
+  name: "resnet18"
+pretrain_method: "simsiam"
+data:
+  dataset: tiny-imagenet
+  train_path: "./datasets/tiny-imagenet/tiny-imagenet-200/train"
+  val_path: "./datasets/tiny-imagenet/tiny-imagenet-200/test"
+  format: "dali"
+  num_workers: 8
+optimizer:
+  name: "sgd"
+  batch_size: 256
+  lr: 0.3
+  weight_decay: 0
+scheduler:
+  name: "step"
+  lr_decay_steps: [60, 80]
+checkpoint:
+  enabled: True
+  dir: "trained_models"
+  frequency: 1
+auto_resume:
+  enabled: False
+
+# overwrite PL stuff
+max_epochs: 100
+devices: [0]
+sync_batchnorm: True
+accelerator: "gpu"
+strategy: "ddp"
+precision: 16

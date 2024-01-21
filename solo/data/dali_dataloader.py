@@ -865,7 +865,7 @@ class ClassificationDALIDataModule(pl.LightningDataModule):
         assert dali_device in ["gpu", "cpu"]
 
         # handle custom data by creating the needed pipeline
-        if dataset in ["imagenet100", "imagenet"]:
+        if dataset in ["imagenet100", "imagenet", "tiny-imagenet"]:
             self.pipeline_class = NormalPipelineBuilder
         elif dataset == "custom":
             self.pipeline_class = CustomNormalPipelineBuilder
