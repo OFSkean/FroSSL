@@ -28,9 +28,9 @@ python3 -u main_pretrain.py \
     --config-path $PRETRAIN_CONFIG_PATH \
     --config-name $CONFIG_NAME \
     ++name="$EXPERIMENT_NAME" \
-    ++method_kwargs.entropy_cutoff=$ENTROPY_CUTOFF \
-    ++augmentations.0.num_crops=$NUM_AUGMENTATIONS \
     ++backbone.name=$BACKBONE \
+    #     ++method_kwargs.entropy_cutoff=$ENTROPY_CUTOFF \
+    # ++augmentations.0.num_crops=$NUM_AUGMENTATIONS \
 
 # get pretrained path from last_ckpt.txt file
 TRAINED_CHECKPOINT_PATH=$(cat last_ckpt.txt)

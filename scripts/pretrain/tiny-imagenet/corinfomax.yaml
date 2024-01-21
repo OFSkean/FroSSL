@@ -11,14 +11,19 @@ hydra:
   run:
     dir: .
 
-name: "barlow-tiny" # change here for cifar100
-method: "barlow_twins"
+name: "corinfomax-stl10" # change here for cifar100
+method: "corinfomax"
 backbone:
   name: "resnet18"
 method_kwargs:
   proj_hidden_dim: 2048
-  proj_output_dim: 2048
-  scale_loss: 0.1
+  proj_output_dim: 64
+  R_ini: 1.0          # coefficient of initial covariance
+  la_R: 1e-2         # forgetting factor for covariance
+  la_mu: 1e-2        # forgetting factor for mean
+  R_eps_weight: 1e-8 # diagonal perturbation factor of covariance matrix R1
+  alpha_tradeoff: 500 # tradeoff coefficient for invariance loss
+
 data:
   dataset: tiny-imagenet
   train_path: "./datasets/tiny-imagenet/tiny-imagenet-200/train"
@@ -28,7 +33,7 @@ data:
 optimizer:
   name: "lars"
   batch_size: 512
-  lr: 0.3
+  lr: 0.5
   classifier_lr: 0.1
   weight_decay: 1e-4
   kwargs:

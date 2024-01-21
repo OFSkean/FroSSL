@@ -1,6 +1,6 @@
 defaults:
   - _self_
-  - augmentations: asymmetric.yaml
+  - augmentations: symmetric.yaml
   - wandb: private.yaml
   - override hydra/hydra_logging: disabled
   - override hydra/job_logging: disabled
@@ -11,14 +11,17 @@ hydra:
   run:
     dir: .
 
-name: "barlow-tiny" # change here for cifar100
-method: "barlow_twins"
+name: "byol-stl10" # change here for cifar100
+method: "byol"
 backbone:
   name: "resnet18"
 method_kwargs:
-  proj_hidden_dim: 2048
-  proj_output_dim: 2048
-  scale_loss: 0.1
+  proj_hidden_dim: 4096
+  proj_output_dim: 256
+  pred_hidden_dim: 4096
+momentum:
+  base_tau: 0.99
+  final_tau: 1.0
 data:
   dataset: tiny-imagenet
   train_path: "./datasets/tiny-imagenet/tiny-imagenet-200/train"
@@ -28,9 +31,9 @@ data:
 optimizer:
   name: "lars"
   batch_size: 512
-  lr: 0.3
+  lr: 1.0
   classifier_lr: 0.1
-  weight_decay: 1e-4
+  weight_decay: 1e-5
   kwargs:
     clip_lr: True
     eta: 0.02
