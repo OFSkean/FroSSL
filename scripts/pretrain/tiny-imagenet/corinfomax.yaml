@@ -21,7 +21,7 @@ method_kwargs:
   R_ini: 1.0          # coefficient of initial covariance
   la_R: 1e-2         # forgetting factor for covariance
   la_mu: 1e-2        # forgetting factor for mean
-  R_eps_weight: 1e-8 # diagonal perturbation factor of covariance matrix R1
+  R_eps_weight: 1e-6 # diagonal perturbation factor of covariance matrix R1
   alpha_tradeoff: 500 # tradeoff coefficient for invariance loss
 
 data:
