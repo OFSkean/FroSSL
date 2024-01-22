@@ -25,6 +25,7 @@ class SEARMSE(BaseMethod):
         self.alpha: float = cfg.method_kwargs.alpha
         self.kernel_type: str = cfg.method_kwargs.kernel_type
         self.entropy_cutoff: float = cfg.method_kwargs.entropy_cutoff
+        self.cutoff_type: str = cfg.method_kwargs.cutoff_type
 
         proj_hidden_dim: int = cfg.method_kwargs.proj_hidden_dim
         proj_output_dim: int = cfg.method_kwargs.proj_output_dim
