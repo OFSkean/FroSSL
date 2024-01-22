@@ -106,7 +106,7 @@ class SEARMSE(BaseMethod):
         z = out["z"]
 
         if self.cutoff_type == "linear":
-            entropy_weight = max(self.entropy_cutoff, (self.global_step / self.max_steps) * self.entropy_cutoff)
+            entropy_weight = max(self.entropy_cutoff, 1 - (self.trainer.current_epoch / self.trainer.max_epochs))
         elif self.cutoff_type == "constant":
             entropy_weight = self.entropy_cutoff
         else:
