@@ -60,7 +60,7 @@ class SEARMSE(BaseMethod):
         cfg.method_kwargs.alpha = omegaconf_select(cfg, "method_kwargs.alpha", 1.01)
         cfg.method_kwargs.kernel_type = omegaconf_select(cfg, "method_kwargs.scale_loss", "linear")
         cfg.method_kwargs.entropy_cutoff = omegaconf_select(cfg, "method_kwargs.entropy_cutoff", 0.2)
-        cfg.method_kwargs.entropy_cutoff = omegaconf_select(cfg, "method_kwargs.cutoff_type", "linear")
+        cfg.method_kwargs.cutoff_type = omegaconf_select(cfg, "method_kwargs.cutoff_type", "linear")
         return cfg
 
     @property
