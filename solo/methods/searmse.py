@@ -59,7 +59,7 @@ class SEARMSE(BaseMethod):
         cfg.method_kwargs.alpha = omegaconf_select(cfg, "method_kwargs.alpha", 1.01)
         cfg.method_kwargs.kernel_type = omegaconf_select(cfg, "method_kwargs.scale_loss", "linear")
         cfg.method_kwargs.entropy_cutoff = omegaconf_select(cfg, "method_kwargs.entropy_cutoff", 0.2)
-
+        cfg.method_kwargs.entropy_cutoff = omegaconf_select(cfg, "method_kwargs.cutoff_type", "linear")
         return cfg
 
     @property
@@ -104,7 +104,13 @@ class SEARMSE(BaseMethod):
         class_loss = out["loss"]
         z = out["z"]
 
-        entropy_weight = self.entropy_cutoff
+        if self.cutoff_type == "linear":
+            entropy_weight = max(self.entropy_cutoff, (self.global_step / self.max_steps) * self.entropy_cutoff)
+        elif self.cutoff_type == "constant":
+            entropy_weight = self.entropy_cutoff
+        else:
+            raise NotImplementedError(f"{self.cutoff_type} not implemented")
+        
         self.log("entropy_weight", entropy_weight, on_epoch=True, sync_dist=True)
 
         if len(z) == 2:

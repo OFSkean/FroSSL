@@ -21,7 +21,8 @@ method_kwargs:
   alpha: 2
   kernel_type: "linear"
   entropy_cutoff: 1.0
-
+  cutoff_type: "linear"
+  
 data:
   dataset: tiny-imagenet
   train_path: "./datasets/tiny-imagenet/tiny-imagenet-200/train"
