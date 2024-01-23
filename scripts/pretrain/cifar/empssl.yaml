@@ -1,6 +1,6 @@
 defaults:
   - _self_
-  - augmentations: asymmetric.yaml
+  - augmentations: empssl.yaml
   - wandb: private.yaml
   - override hydra/hydra_logging: disabled
   - override hydra/job_logging: disabled
@@ -11,26 +11,27 @@ hydra:
   run:
     dir: .
 
-name: "sear-cifar10" # change here for cifar100
-method: "sear"
+name: "empssl-cifar10" # change here for cifar100
+method: "empssl"
 backbone:
   name: "resnet18"
 method_kwargs:
-  proj_hidden_dim: 2048
-  proj_output_dim: 2048
-  alpha: 2
-  kernel_type: "linear"
-  rank_calculator: "frobenius"
+  proj_hidden_dim: 4096
+  proj_output_dim: 512
+  tcr_epsilon: 0.2
+  tcr_weight: 1
+  inv_weight: 200
+  augment_val: True
 
 data:
   dataset: cifar10 # change here for cifar100
   train_path: "./datasets"
   val_path: "./datasets"
   format: "image_folder"
-  num_workers: 4
+  num_workers: 8
 optimizer:
   name: "lars"
-  batch_size: 256
+  batch_size: 100
   lr: 0.3
   classifier_lr: 0.1
   weight_decay: 1e-4
@@ -39,7 +40,9 @@ optimizer:
     eta: 0.02
     exclude_bias_n_norm: True
 scheduler:
-  name: "warmup_cosine"
+   name: "warmup_cosine"
+   warmup_start_lr: 0.3
+   warmup_epochs: 0
 checkpoint:
   enabled: True
   dir: "trained_models"
@@ -48,7 +51,7 @@ auto_resume:
   enabled: True
 
 # overwrite PL stuff
-max_epochs: 1000
+max_epochs: 30
 devices: [0]
 sync_batchnorm: True
 accelerator: "gpu"

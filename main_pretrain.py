@@ -69,7 +69,7 @@ def main(cfg: DictConfig):
     assert cfg.method in METHODS, f"Choose from {METHODS.keys()}"
 
     if cfg.data.num_large_crops != 2:
-        assert cfg.method in ["wmse", "mae", "searmse", "mmcr"]
+        assert cfg.method in ["wmse", "mae", "searmse", "mmcr", "empssl"]
 
     model = METHODS[cfg.method](cfg)
     make_contiguous(model)
@@ -153,6 +153,19 @@ def main(cfg: DictConfig):
         train_loader = prepare_dataloader(
             train_dataset, batch_size=cfg.optimizer.batch_size, num_workers=cfg.data.num_workers
         )
+
+        if cfg.method_kwargs.augment_val:
+            val_dataset = prepare_datasets(
+                cfg.data.dataset,
+                transform,
+                train_data_path=cfg.data.val_path,
+                data_format=cfg.data.format,
+                no_labels=cfg.data.no_labels,
+                data_fraction=cfg.data.fraction,
+            )
+            val_loader = prepare_dataloader(
+                val_dataset, batch_size=cfg.optimizer.batch_size, num_workers=cfg.data.num_workers, shuffle=False
+            )
 
     # 1.7 will deprecate resume_from_checkpoint, but for the moment
     # the argument is the same, but we need to pass it as ckpt_path to trainer.fit

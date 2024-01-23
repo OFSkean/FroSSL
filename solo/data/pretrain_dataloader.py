@@ -299,6 +299,7 @@ def prepare_datasets(
     no_labels: Optional[Union[str, Path]] = False,
     download: bool = True,
     data_fraction: float = -1.0,
+    train_dataset=True,
 ) -> Dataset:
     """Prepares the desired dataset.
 
@@ -323,7 +324,7 @@ def prepare_datasets(
         DatasetClass = vars(torchvision.datasets)[dataset.upper()]
         train_dataset = dataset_with_index(DatasetClass)(
             train_data_path,
-            train=True,
+            train=train_dataset,
             download=download,
             transform=transform,
         )
@@ -375,7 +376,7 @@ def prepare_datasets(
 
 
 def prepare_dataloader(
-    train_dataset: Dataset, batch_size: int = 64, num_workers: int = 4
+    train_dataset: Dataset, batch_size: int = 64, num_workers: int = 4, shuffle: bool = True
 ) -> DataLoader:
     """Prepares the training dataloader for pretraining.
     Args:
@@ -389,7 +390,7 @@ def prepare_dataloader(
     train_loader = DataLoader(
         train_dataset,
         batch_size=batch_size,
-        shuffle=True,
+        shuffle=shuffle,
         num_workers=num_workers,
         pin_memory=True,
         drop_last=True,

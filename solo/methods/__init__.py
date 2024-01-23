@@ -41,6 +41,7 @@ from solo.methods.vicreg import VICReg
 from solo.methods.wmse import WMSE
 from solo.methods.sear import SEAR
 from solo.methods.searmse import SEARMSE
+from solo.methods.empssl import EMPSSL
 
 METHODS = {
     # base classes
@@ -53,6 +54,7 @@ METHODS = {
     "corinfomax": CorInfoMax,
     "deepclusterv2": DeepClusterV2,
     "dino": DINO,
+    "empssl": EMPSSL,
     "mae": MAE,
     "mmcr": MMCR,
     "mocov2plus": MoCoV2Plus,
@@ -79,6 +81,7 @@ __all__ = [
     "CorInfoMax",
     "DeepClusterV2",
     "DINO",
+    "EMPSSL",
     "MAE",
     "MMCR"
     "LinearModel",

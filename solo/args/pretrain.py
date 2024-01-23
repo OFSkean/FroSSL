@@ -146,6 +146,7 @@ def parse_cfg(cfg: omegaconf.DictConfig):
             num_small_crops += pipeline.num_crops
     cfg.data.num_large_crops = num_large_crops
     cfg.data.num_small_crops = num_small_crops
+    cfg.method_kwargs.augment_val = omegaconf_select(cfg, "method_kwargs.augment_val", False)
 
     if cfg.data.format == "dali":
         assert cfg.data.dataset in ["imagenet100", "imagenet", "custom", "tiny-imagenet"]
