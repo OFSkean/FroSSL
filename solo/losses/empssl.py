@@ -15,20 +15,20 @@ def cosine_similarity_loss_func(z_list: List[torch.Tensor], z_avg) -> torch.Tens
         z_sim = 0
         for i in range(num_patch):
             z_sim += F.cosine_similarity(z_list[i], z_avg, dim=1).mean()
-            
+        
         z_sim = z_sim/num_patch
                 
         return -z_sim
 
 
 def calculate_TCR(W, eps):
-    p, m = W.shape  #[d, B]
+    m, p = W.shape  #[B, d]
     I = torch.eye(p,device=W.device)
     scalar = p / (m * eps)
-    logdet = torch.logdet(I + scalar * W.matmul(W.T))
-    return logdet / 2.
+    logdet = torch.logdet(I + scalar * W.T @ W)
+    return -logdet / 2.
 
 def calculate_TCR_for_list(z_list, eps):
     loss_per_z = [calculate_TCR(z, eps) for z in list(z_list)]
     loss = sum(loss_per_z) / len(loss_per_z)
-    return -loss
+    return loss

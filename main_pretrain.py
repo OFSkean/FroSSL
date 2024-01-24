@@ -155,13 +155,22 @@ def main(cfg: DictConfig):
         )
 
         if cfg.method_kwargs.augment_val:
+            val_pipeline= []
+            val_pipeline.append(
+                NCropAugmentation(
+                    build_transform_pipeline(cfg.data.dataset, aug_cfg), cfg.method_kwargs.num_crops_val
+                )
+            )
+            val_transform = FullTransformPipeline(val_pipeline)
+
             val_dataset = prepare_datasets(
                 cfg.data.dataset,
-                transform,
+                val_transform,
                 train_data_path=cfg.data.val_path,
                 data_format=cfg.data.format,
                 no_labels=cfg.data.no_labels,
                 data_fraction=cfg.data.fraction,
+                train_dataset=False
             )
             val_loader = prepare_dataloader(
                 val_dataset, batch_size=cfg.optimizer.batch_size, num_workers=cfg.data.num_workers, shuffle=False

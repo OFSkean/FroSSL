@@ -27,6 +27,7 @@ class EMPSSL(BaseMethod):
         proj_output_dim: int = cfg.method_kwargs.proj_output_dim
 
         self.num_patches = cfg.num_patches
+        self.num_patches_val = cfg.num_patches_val
         self.tcr_epsilon = cfg.tcr_epsilon
         self.inv_weight = cfg.inv_weight
         self.tcr_weight = cfg.tcr_weight
@@ -56,6 +57,7 @@ class EMPSSL(BaseMethod):
         assert not omegaconf.OmegaConf.is_missing(cfg, "method_kwargs.proj_output_dim")
 
         cfg.num_patches = omegaconf_select(cfg, "augmentations.0.num_crops", 100)
+        cfg.num_patches_val = omegaconf_select(cfg, "method_kwargs.num_crops_val", 1)
         cfg.tcr_epsilon = omegaconf_select(cfg, "method_kwargs.tcr_epsilon", 0.2)
         cfg.tcr_weight = omegaconf_select(cfg, "method_kwargs.tcr_weight", 1)
         cfg.inv_weight = omegaconf_select(cfg, "method_kwargs.inv_weight", 200)
@@ -73,7 +75,7 @@ class EMPSSL(BaseMethod):
         extra_learnable_params = [{"name": "projector", "params": self.projector.parameters()}]
         return super().learnable_params + extra_learnable_params
 
-    def forward(self, X: List[torch.Tensor]) -> Dict[str, Any]:
+    def forward(self, X: List[torch.Tensor], n_patches: int) -> Dict[str, Any]:
         """Performs the forward pass of the backbone and the projector.
 
         Args:
@@ -85,13 +87,11 @@ class EMPSSL(BaseMethod):
 
         # concat all patches together for quick forward pass
         X = torch.cat(X, dim=0)
-        if not self.no_channel_last:
-            X = X.to(memory_format=torch.channels_last)
 
         # forward pass
         feats = self.backbone(X)
-        logits = self.classifier(self.chunk_avg(feats, self.num_patches))
-        z = self.projector(feats)
+        z = F.normalize(self.projector(feats), p=2)
+        logits = self.classifier(self.chunk_avg(feats, n_patches))
 
         return {"logits": logits, "z": z}
 
@@ -112,7 +112,7 @@ class EMPSSL(BaseMethod):
         
         # forward pass
         _, X, targets = batch
-        outs= self(X)
+        outs= self(X, self.num_patches)
 
         # unchunk projections
         z_list = outs["z"].chunk(self.num_patches, dim=0)
@@ -132,6 +132,9 @@ class EMPSSL(BaseMethod):
         tcr_loss = calculate_TCR_for_list(z_list, self.tcr_epsilon)
         loss = (self.inv_weight*inv_loss) + (self.tcr_weight*tcr_loss)
 
+        self.log("train_inv_loss", inv_loss)
+        self.log("train_tcr_loss", tcr_loss)
+
         return loss + outs["class_loss"]
 
     def validation_step(
@@ -144,7 +147,7 @@ class EMPSSL(BaseMethod):
         _, X, targets = batch
 
         batch_size = targets.size(0)
-        outs= self(X)
+        outs= self(X, self.num_patches_val)
         outs = self.get_online_classifier_loss(outs, outs["logits"], targets)
 
         metrics = {
