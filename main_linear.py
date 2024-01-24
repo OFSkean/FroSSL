@@ -34,6 +34,8 @@ from timm.loss import LabelSmoothingCrossEntropy, SoftTargetCrossEntropy
 
 from solo.args.linear import parse_cfg
 from solo.data.classification_dataloader import prepare_data
+from solo.data.pretrain_dataloader import NCropAugmentation, build_transform_pipeline
+from solo.methods.bagoffeatures import BagOfFeaturesModel
 from solo.methods.base import BaseMethod
 from solo.methods.linear import LinearModel
 from solo.utils.auto_resumer import AutoResumer
@@ -113,7 +115,22 @@ def main(cfg: DictConfig):
     else:
         loss_func = torch.nn.CrossEntropyLoss()
 
-    model = LinearModel(backbone, loss_func=loss_func, mixup_func=mixup_func, cfg=cfg)
+    if cfg.pretrain_method == "empssl":
+        aug_cfg = cfg.augmentations[0]
+
+        train_pipeline = NCropAugmentation(
+                    build_transform_pipeline(cfg.data.dataset, aug_cfg), 20
+                )
+        val_pipeline =  NCropAugmentation(
+                    build_transform_pipeline(cfg.data.dataset, aug_cfg), 20
+                )
+        modelClass = BagOfFeaturesModel
+    else:
+        modelClass = LinearModel
+        train_pipeline = None
+        val_pipeline = None
+
+    model = modelClass(backbone, loss_func=loss_func, mixup_func=mixup_func, cfg=cfg)
     make_contiguous(model)
     # can provide up to ~20% speed up
     if not cfg.performance.disable_channel_last:
@@ -132,6 +149,8 @@ def main(cfg: DictConfig):
         batch_size=cfg.optimizer.batch_size,
         num_workers=cfg.data.num_workers,
         auto_augment=cfg.auto_augment,
+        train_pipeline = train_pipeline,
+        val_pipeline = val_pipeline,
     )
 
     if cfg.data.format == "dali":

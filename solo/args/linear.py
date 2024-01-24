@@ -142,6 +142,7 @@ def parse_cfg(cfg: omegaconf.DictConfig):
     cfg.cutmix = omegaconf_select(cfg, "cutmix", 0.0)
 
     # augmentation related (crop size and custom mean/std values for normalization)
+    cfg.augmentations = omegaconf_select(cfg, "augmentations", {})
     cfg.data.augmentations = omegaconf_select(cfg, "data.augmentations", {})
     cfg.data.augmentations.crop_size = omegaconf_select(cfg, "data.augmentations.crop_size", 224)
     cfg.data.augmentations.mean = omegaconf_select(
@@ -150,6 +151,9 @@ def parse_cfg(cfg: omegaconf.DictConfig):
     cfg.data.augmentations.std = omegaconf_select(
         cfg, "data.augmentations.std", IMAGENET_DEFAULT_STD
     )
+    cfg.method_kwargs.augment_val = omegaconf_select(cfg, "method_kwargs.augment_val", False)
+    cfg.method_kwargs.num_crops_val = omegaconf_select(cfg, "method_kwargs.num_crops_val", 2)
+
 
     # extra processing
     if cfg.data.dataset in _N_CLASSES_PER_DATASET:

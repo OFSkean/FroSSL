@@ -73,7 +73,7 @@ def prepare_transforms(dataset: str) -> Tuple[nn.Module, nn.Module]:
     Returns:
         Tuple[nn.Module, nn.Module]: training and validation transformation pipelines.
     """
-
+    
     cifar_pipeline = {
         "T_train": transforms.Compose(
             [
@@ -303,6 +303,9 @@ def prepare_data(
     download: bool = True,
     data_fraction: float = -1.0,
     auto_augment: bool = False,
+    train_pipeline: Optional[Callable] = None,
+    val_pipeline: Optional[Callable] = None,
+
 ) -> Tuple[DataLoader, DataLoader]:
     """Prepares transformations, creates dataset objects and wraps them in dataloaders.
 
@@ -320,12 +323,21 @@ def prepare_data(
             Defaults to -1.0.
         auto_augment (bool, optional): use auto augment following timm.data.create_transform.
             Defaults to False.
+        train_pipeline (Optional[Callable], optional): pipeline of transformations for training dataset.
+            Defaults to None.
+        val_pipeline (Optional[Callable], optional): pipeline of transformations for validation dataset.
+            Defaults to None.
 
     Returns:
         Tuple[DataLoader, DataLoader]: prepared training and validation dataloader.
     """
 
     T_train, T_val = prepare_transforms(dataset)
+    if train_pipeline is not None:
+        T_train = train_pipeline
+    if val_pipeline is not None:
+        T_val = val_pipeline
+
     if auto_augment:
         T_train = create_transform(
             input_size=224,
