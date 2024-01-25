@@ -11,23 +11,23 @@ hydra:
   run:
     dir: .
 
-name: "searmse-stl10" # change here for cifar100
-method: "searmse"
+name: "frossl-imagenet" # change here for cifar100
+method: "frossl"
 backbone:
   name: "resnet18"
 method_kwargs:
-  proj_hidden_dim: 4096
-  proj_output_dim: 2048
+  proj_hidden_dim: 2048
+  proj_output_dim: 1024
   alpha: 2
   kernel_type: "linear"
-  entropy_cutoff: 0.4
+  entropy_cutoff: 1.0
 
 data:
-  dataset: stl10 # change here for cifar100
-  train_path: "./datasets/stl10"
-  val_path: "./datasets/stl10"
-  format: "image_folder"
-  num_workers: 16
+  dataset: imagenet
+  train_path: "./datasets/imagenet/train"
+  val_path: "./datasets/imagenet/val"
+  format: "dali"
+  num_workers: 8
 optimizer:
   name: "lars"
   batch_size: 256
@@ -48,8 +48,8 @@ auto_resume:
   enabled: False
 
 # overwrite PL stuff
-max_epochs: 500
-devices: [0]
+max_epochs: 100
+devices: [0, 1]
 sync_batchnorm: True
 accelerator: "gpu"
 strategy: "ddp"

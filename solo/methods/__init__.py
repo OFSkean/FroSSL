@@ -40,8 +40,7 @@ from solo.methods.swav import SwAV
 from solo.methods.vibcreg import VIbCReg
 from solo.methods.vicreg import VICReg
 from solo.methods.wmse import WMSE
-from solo.methods.sear import SEAR
-from solo.methods.searmse import SEARMSE
+from solo.methods.frossl import FroSSL
 from solo.methods.empssl import EMPSSL
 
 METHODS = {
@@ -57,7 +56,7 @@ METHODS = {
     "dino": DINO,
     "empfrossl": EMPFROSSL,
     "empssl": EMPSSL,
-
+    "frossl": FroSSL,
     "mae": MAE,
     "mmcr": MMCR,
     "mocov2plus": MoCoV2Plus,
@@ -66,8 +65,6 @@ METHODS = {
     "nnclr": NNCLR,
     "nnsiam": NNSiam,
     "ressl": ReSSL,
-    "sear": SEAR,
-    "searmse": SEARMSE,
     "simclr": SimCLR,
     "simsiam": SimSiam,
     "supcon": SupCon,
@@ -86,6 +83,7 @@ __all__ = [
     "DINO",
     "EMPFROSSL"
     "EMPSSL",
+    "FroSSL"
     "MAE",
     "MMCR"
     "LinearModel",
@@ -95,8 +93,6 @@ __all__ = [
     "NNCLR",
     "NNSiam",
     "ReSSL",
-    "SEAR",
-    "SEARMSE"
     "SimCLR",
     "SimSiam",
     "SupCon",

@@ -1,6 +1,5 @@
 defaults:
   - _self_
-  - augmentations: symmetric.yaml
   - wandb: private.yaml
   - override hydra/hydra_logging: disabled
   - override hydra/job_logging: disabled
@@ -11,35 +10,25 @@ hydra:
   run:
     dir: .
 
-name: "frossl-imagenet" # change here for cifar100
-method: "searmse"
+name: "frossl-tiny-linear"
+pretrained_feature_extractor: None
 backbone:
   name: "resnet18"
-method_kwargs:
-  proj_hidden_dim: 2048
-  proj_output_dim: 1024
-  alpha: 2
-  kernel_type: "linear"
-  entropy_cutoff: 1.0
-
+pretrain_method: "frossl"
 data:
-  dataset: imagenet
-  train_path: "./datasets/imagenet/train"
-  val_path: "./datasets/imagenet/val"
+  dataset: tiny-imagenet
+  train_path: "./datasets/tiny-imagenet/tiny-imagenet-200/train"
+  val_path: "./datasets/tiny-imagenet/tiny-imagenet-200/test"
   format: "dali"
   num_workers: 8
 optimizer:
-  name: "lars"
+  name: "sgd"
   batch_size: 256
   lr: 0.3
-  classifier_lr: 0.1
-  weight_decay: 1e-4
-  kwargs:
-    clip_lr: True
-    eta: 0.02
-    exclude_bias_n_norm: True
+  weight_decay: 0
 scheduler:
-  name: "warmup_cosine"
+  name: "step"
+  lr_decay_steps: [60, 80]
 checkpoint:
   enabled: True
   dir: "trained_models"
@@ -49,8 +38,8 @@ auto_resume:
 
 # overwrite PL stuff
 max_epochs: 100
-devices: [0, 1]
+devices: [0]
 sync_batchnorm: True
 accelerator: "gpu"
 strategy: "ddp"
-precision: 16-mixed
+precision: 16

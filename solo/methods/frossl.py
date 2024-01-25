@@ -3,14 +3,14 @@ from typing import Any, List, Sequence, Dict
 import omegaconf
 import torch
 import torch.nn as nn
-from solo.losses.searmse import searmse_loss_func, mutliview_searmse_loss_func
+from solo.losses.frossl import frossl_loss_func, multiview_frossl_loss_func
 from solo.methods.base import BaseMethod
 from solo.utils.misc import omegaconf_select
 import torch.nn.functional as F
 
-class SEARMSE(BaseMethod):
+class FroSSL(BaseMethod):
     def __init__(self, cfg: omegaconf.DictConfig):
-        """Implements SEAR
+        """Implements FroSSL
 
         Extra cfg settings:
             method_kwargs:
@@ -52,7 +52,7 @@ class SEARMSE(BaseMethod):
             omegaconf.DictConfig: same as the argument, used to avoid errors.
         """
 
-        cfg = super(SEARMSE, SEARMSE).add_and_assert_specific_cfg(cfg)
+        cfg = super(FroSSL, FroSSL).add_and_assert_specific_cfg(cfg)
 
         assert not omegaconf.OmegaConf.is_missing(cfg, "method_kwargs.proj_hidden_dim")
         assert not omegaconf.OmegaConf.is_missing(cfg, "method_kwargs.proj_output_dim")
@@ -90,7 +90,7 @@ class SEARMSE(BaseMethod):
         return out
     
     def training_step(self, batch: Sequence[Any], batch_idx: int) -> torch.Tensor:
-        """Training step for SEARMSE reusing BaseMethod training step.
+        """Training step for FroSSL reusing BaseMethod training step.
 
         Args:
             batch (Sequence[Any]): a batch of data in the format of [img_indexes, [X], Y], where
@@ -98,7 +98,7 @@ class SEARMSE(BaseMethod):
             batch_idx (int): index of the batch.
 
         Returns:
-            torch.Tensor: total loss composed of SEARMSE loss and classification loss.
+            torch.Tensor: total loss composed of FroSSL loss and classification loss.
         """
 
         out = super().training_step(batch, batch_idx)
@@ -117,10 +117,10 @@ class SEARMSE(BaseMethod):
         if len(z) == 2:
             z1 = z[0]
             z2 = z[1]
-            searmse_loss = searmse_loss_func(z1, z2, kernel_type=self.kernel_type, alpha=self.alpha, entropy_weight=entropy_weight, logger=self.log)
+            frossl_loss = frossl_loss_func(z1, z2, kernel_type=self.kernel_type, alpha=self.alpha, entropy_weight=entropy_weight, logger=self.log)
         else:
-            searmse_loss = mutliview_searmse_loss_func(z, entropy_weight=entropy_weight, logger=self.log)
+            frossl_loss = multiview_frossl_loss_func(z, entropy_weight=entropy_weight, logger=self.log)
             
-        # self.log("train_searmse_loss", searmse_loss, on_epoch=True, sync_dist=True)
+        self.log("train_frossl_loss", frossl_loss, on_epoch=True, sync_dist=True)
         
-        return searmse_loss + class_loss
+        return frossl_loss + class_loss

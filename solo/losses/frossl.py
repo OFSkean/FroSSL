@@ -8,7 +8,7 @@ import repitl.matrix_itl as itl
 import repitl.difference_of_entropies as dent
 
 # two view loss
-def searmse_loss_func(
+def frossl_loss_func(
     z_a: torch.Tensor, z_b: torch.Tensor, kernel_type: str, alpha: float, entropy_weight=1, logger=None
 ) -> torch.Tensor:
     # normalize repr. along the batch dimension
@@ -50,7 +50,7 @@ def searmse_loss_func(
     return -loss
 
 # multi-view loss. same as above but with multiple views
-def mutliview_searmse_loss_func(
+def multiview_frossl_loss_func(
     z_list: List[torch.Tensor], entropy_weight=1, logger=None
 ) -> torch.Tensor:
     

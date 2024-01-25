@@ -3,7 +3,7 @@ from typing import Any, List, Sequence, Dict
 import omegaconf
 import torch
 import torch.nn as nn
-from solo.losses.searmse import mutliview_searmse_loss_func
+from solo.losses.frossl import multiview_frossl_loss_func
 from solo.methods.base import BaseMethod
 from solo.utils.misc import omegaconf_select
 import torch.nn.functional as F
@@ -11,7 +11,7 @@ from solo.utils.metrics import accuracy_at_k
 
 class EMPFROSSL(BaseMethod):
     def __init__(self, cfg: omegaconf.DictConfig):
-        """Implements SEAR
+        """Incorporates FroSSL into the EMP-SSL framework
 
         Extra cfg settings:
             method_kwargs:
@@ -99,7 +99,7 @@ class EMPFROSSL(BaseMethod):
         return {"logits": logits, "z": z}
 
     def training_step(self, batch: Sequence[Any], batch_idx: int) -> torch.Tensor:
-        """Training step for SEARMSE reusing BaseMethod training step.
+        """Training step for FroSSL reusing BaseMethod training step.
 
         Args:
             batch (Sequence[Any]): a batch of data in the format of [img_indexes, [X], Y], where
@@ -107,7 +107,7 @@ class EMPFROSSL(BaseMethod):
             batch_idx (int): index of the batch.
 
         Returns:
-            torch.Tensor: total loss composed of SEARMSE loss and classification loss.
+            torch.Tensor: total loss composed of FroSSL loss and classification loss.
         """
 
         # DUE TO THE PATCH NATURE OF THIS METHOD, WE NEED TO MODIFY THE TRAINING STEP
@@ -131,7 +131,7 @@ class EMPFROSSL(BaseMethod):
         self.log_dict(metrics, on_epoch=True, sync_dist=True)
         
         # calculate loss
-        frossl_loss = mutliview_searmse_loss_func(z_list, entropy_weight=self.entropy_cutoff)
+        frossl_loss = multiview_frossl_loss_func(z_list, entropy_weight=self.entropy_cutoff)
 
         self.log("train_frossl_loss", frossl_loss)
 

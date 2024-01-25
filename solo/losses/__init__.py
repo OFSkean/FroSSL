@@ -32,8 +32,7 @@ from solo.losses.swav import swav_loss_func
 from solo.losses.vibcreg import vibcreg_loss_func
 from solo.losses.vicreg import vicreg_loss_func
 from solo.losses.wmse import wmse_loss_func
-from solo.losses.sear import sear_loss_func
-from solo.losses.searmse import searmse_loss_func
+from solo.losses.frossl import frossl_loss_func
 from solo.losses.corinfomax import CorInfoMax_Loss
 from solo.losses.mmcr import maximum_manifold_capacity
 
@@ -49,8 +48,7 @@ __all__ = [
     "mocov3_loss_func",
     "nnclr_loss_func",
     "ressl_loss_func",
-    "sear_loss_func",
-    "searmse_loss_func",
+    "frossl_loss_func",
     "simclr_loss_func",
     "simsiam_loss_func",
     "swav_loss_func",

@@ -1,6 +1,5 @@
 defaults:
   - _self_
-  - augmentations: asymmetric.yaml
   - wandb: private.yaml
   - override hydra/hydra_logging: disabled
   - override hydra/job_logging: disabled
@@ -11,8 +10,9 @@ hydra:
   run:
     dir: .
 
-name: "searmse-cifar10" # change here for cifar100
-method: "searmse"
+name: "frossl-cifar100-linear-bs128" # change here for cifar100
+pretrain_method: "frossl"
+
 backbone:
   name: "resnet18"
 method_kwargs:
@@ -22,23 +22,19 @@ method_kwargs:
   kernel_type: "linear"
 
 data:
-  dataset: cifar10 # change here for cifar100
+  dataset: cifar100 # change here for cifar100
   train_path: "./datasets"
   val_path: "./datasets"
   format: "image_folder"
   num_workers: 4
 optimizer:
-  name: "lars"
+  name: "adam"
   batch_size: 256
-  lr: 0.3
-  classifier_lr: 0.1
-  weight_decay: 1e-4
-  kwargs:
-    clip_lr: True
-    eta: 0.02
-    exclude_bias_n_norm: True
+  lr: 0.001
+  weight_decay: 0
 scheduler:
-  name: "warmup_cosine"
+  name: "step"
+  lr_decay_steps: [40, 80]
 checkpoint:
   enabled: True
   dir: "trained_models"
@@ -47,7 +43,7 @@ auto_resume:
   enabled: False
 
 # overwrite PL stuff
-max_epochs: 1000
+max_epochs: 100
 devices: [0]
 sync_batchnorm: True
 accelerator: "gpu"

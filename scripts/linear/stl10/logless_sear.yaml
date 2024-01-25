@@ -11,10 +11,9 @@ hydra:
     dir: .
 
 name: "logless-stl10-linear"
-pretrained_feature_extractor: "/home/AD/ofsk222/Research/clones/solo-learn/trained_models/logless_sear/50yv8v5g/logless-stl10-50yv8v5g-ep=499.ckpt"
 backbone:
   name: "resnet18"
-pretrain_method: "searmse"
+pretrain_method: "frossl"
 data:
   dataset: stl10
   train_path: "./datasets/stl10"

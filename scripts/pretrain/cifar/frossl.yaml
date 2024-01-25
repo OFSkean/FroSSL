@@ -1,5 +1,6 @@
 defaults:
   - _self_
+  - augmentations: asymmetric.yaml
   - wandb: private.yaml
   - override hydra/hydra_logging: disabled
   - override hydra/job_logging: disabled
@@ -10,31 +11,34 @@ hydra:
   run:
     dir: .
 
-name: "sear-cifar100-linear-output512" # change here for cifar100
-pretrain_method: "sear"
-pretrained_feature_extractor: "/home/AD/ofsk222/Research/clones/solo-learn/trained_models/sear_projection_sweep/proj_output_512/sear-cifar100-aayy6e6x-ep=999.ckpt"
+name: "frossl-cifar10" # change here for cifar100
+method: "frossl"
 backbone:
   name: "resnet18"
 method_kwargs:
   proj_hidden_dim: 2048
-  proj_output_dim: 512
+  proj_output_dim: 1024
   alpha: 2
   kernel_type: "linear"
 
 data:
-  dataset: cifar100 # change here for cifar100
+  dataset: cifar10 # change here for cifar100
   train_path: "./datasets"
   val_path: "./datasets"
   format: "image_folder"
   num_workers: 4
 optimizer:
-  name: "adam"
+  name: "lars"
   batch_size: 256
-  lr: 0.001
-  weight_decay: 0
+  lr: 0.3
+  classifier_lr: 0.1
+  weight_decay: 1e-4
+  kwargs:
+    clip_lr: True
+    eta: 0.02
+    exclude_bias_n_norm: True
 scheduler:
-  name: "step"
-  lr_decay_steps: [40, 80]
+  name: "warmup_cosine"
 checkpoint:
   enabled: True
   dir: "trained_models"
@@ -43,8 +47,8 @@ auto_resume:
   enabled: False
 
 # overwrite PL stuff
-max_epochs: 100
-devices: [1]
+max_epochs: 1000
+devices: [0]
 sync_batchnorm: True
 accelerator: "gpu"
 strategy: "ddp"

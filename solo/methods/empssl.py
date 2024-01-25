@@ -11,7 +11,7 @@ from solo.utils.metrics import accuracy_at_k
 
 class EMPSSL(BaseMethod):
     def __init__(self, cfg: omegaconf.DictConfig):
-        """Implements SEAR
+        """Implements EMP-SSL
 
         Extra cfg settings:
             method_kwargs:
@@ -96,7 +96,7 @@ class EMPSSL(BaseMethod):
         return {"logits": logits, "z": z}
 
     def training_step(self, batch: Sequence[Any], batch_idx: int) -> torch.Tensor:
-        """Training step for SEARMSE reusing BaseMethod training step.
+        """Training step for FroSSL reusing BaseMethod training step.
 
         Args:
             batch (Sequence[Any]): a batch of data in the format of [img_indexes, [X], Y], where
@@ -104,7 +104,7 @@ class EMPSSL(BaseMethod):
             batch_idx (int): index of the batch.
 
         Returns:
-            torch.Tensor: total loss composed of SEARMSE loss and classification loss.
+            torch.Tensor: total loss composed of FroSSL loss and classification loss.
         """
 
         # DUE TO THE PATCH NATURE OF THIS METHOD, WE NEED TO MODIFY THE TRAINING STEP
