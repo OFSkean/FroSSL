@@ -70,7 +70,7 @@ def main(cfg: DictConfig):
             backbone.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=2, bias=False)
             backbone.maxpool = nn.Identity()
 
-    ckpt_path = cfg.pretrained_feature_extractor
+    ckpt_path = cfg.get("pretrained_feature_extractor", None)
     # if no path, read a path from the last_ckpt file
     if ckpt_path == "None" or ckpt_path == None or ckpt_path == '':
         with open("last_ckpt.txt", "r") as f:

@@ -23,6 +23,7 @@ from solo.methods.byol import BYOL
 from solo.methods.corinfomax import CorInfoMax
 from solo.methods.deepclusterv2 import DeepClusterV2
 from solo.methods.dino import DINO
+from solo.methods.empfrossl import EMPFROSSL
 from solo.methods.linear import LinearModel
 from solo.methods.mae import MAE
 from solo.methods.mmcr import MMCR
@@ -54,7 +55,9 @@ METHODS = {
     "corinfomax": CorInfoMax,
     "deepclusterv2": DeepClusterV2,
     "dino": DINO,
+    "empfrossl": EMPFROSSL,
     "empssl": EMPSSL,
+
     "mae": MAE,
     "mmcr": MMCR,
     "mocov2plus": MoCoV2Plus,
@@ -81,6 +84,7 @@ __all__ = [
     "CorInfoMax",
     "DeepClusterV2",
     "DINO",
+    "EMPFROSSL"
     "EMPSSL",
     "MAE",
     "MMCR"

@@ -31,7 +31,7 @@ _SUPPORTED_DATASETS = [
     "stl10",
     "imagenet",
     "imagenet100",
-    "tiny-imagenet"
+    "tiny-imagenet",
     "custom",
 ]
 
@@ -50,7 +50,9 @@ def add_and_assert_dataset_cfg(cfg: omegaconf.DictConfig) -> omegaconf.DictConfi
     assert not OmegaConf.is_missing(cfg, "data.train_path")
     assert not OmegaConf.is_missing(cfg, "data.val_path")
 
-    assert cfg.data.dataset in _SUPPORTED_DATASETS
+    assert cfg.data.dataset in _SUPPORTED_DATASETS, (
+        f"dataset {cfg.data.dataset} not supported, please choose one of {_SUPPORTED_DATASETS}"
+    )
 
     cfg.data.format = omegaconf_select(cfg, "data.format", "image_folder")
     cfg.data.fraction = omegaconf_select(cfg, "data.fraction", -1)
@@ -151,8 +153,8 @@ def parse_cfg(cfg: omegaconf.DictConfig):
     cfg.data.augmentations.std = omegaconf_select(
         cfg, "data.augmentations.std", IMAGENET_DEFAULT_STD
     )
-    cfg.method_kwargs.augment_val = omegaconf_select(cfg, "method_kwargs.augment_val", False)
-    cfg.method_kwargs.num_crops_val = omegaconf_select(cfg, "method_kwargs.num_crops_val", 2)
+    cfg.data.augment_val = omegaconf_select(cfg, "data.augment_val", False)
+    cfg.data.num_crops_val = omegaconf_select(cfg, "data.num_crops_val", 2)
 
 
     # extra processing
@@ -167,7 +169,7 @@ def parse_cfg(cfg: omegaconf.DictConfig):
         )
 
     if cfg.data.format == "dali":
-        assert cfg.data.dataset in ["imagenet100", "imagenet", "custom"]
+        assert cfg.data.dataset in ["imagenet100", "imagenet", "custom", "tiny-imagenet"]
 
     # adjust lr according to batch size
     cfg.num_nodes = omegaconf_select(cfg, "num_nodes", 1)

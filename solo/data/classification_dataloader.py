@@ -73,7 +73,7 @@ def prepare_transforms(dataset: str) -> Tuple[nn.Module, nn.Module]:
     Returns:
         Tuple[nn.Module, nn.Module]: training and validation transformation pipelines.
     """
-    
+
     cifar_pipeline = {
         "T_train": transforms.Compose(
             [
