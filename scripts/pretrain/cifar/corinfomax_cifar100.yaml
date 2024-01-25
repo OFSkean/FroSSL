@@ -16,8 +16,8 @@ method: "corinfomax"
 backbone:
   name: "resnet18"
 method_kwargs:
-  proj_hidden_dim: 2048
-  proj_output_dim: 2048
+  proj_hidden_dim: 4096
+  proj_output_dim: 128
   R_ini: 1.0          # coefficient of initial covariance
   la_R: 1e-2         # forgetting factor for covariance
   la_mu: 1e-2        # forgetting factor for mean
@@ -29,7 +29,7 @@ data:
   train_path: "./datasets"
   val_path: "./datasets"
   format: "image_folder"
-  num_workers: 4
+  num_workers: 8
 optimizer:
   name: "lars"
   batch_size: 256

@@ -1,6 +1,6 @@
 program: main_pretrain.py
 project: frossl-paper
-name: stl10_projdim_sweep
+name: stl10_invariance_weight_8view
 
 command:
   - ${env}
@@ -8,6 +8,7 @@ command:
   - ${program}
   - "--config-path=scripts/pretrain/stl10"
   - "--config-name=frossl.yaml"
+  - "++augmentations.0.num_crops=8"
   - ${args_no_hyphens}
 
 method: bayes
@@ -18,13 +19,13 @@ metric:
 parameters:
   # ADJUSTABLE PARAMETERS
   method_kwargs.invariance_weight:
-    min: 0
-    max: 100
+    min: 0.0001
+    max: 10.0
 
 early_terminate:
   type: hyperband
   s: 3
-  eta: 4
-  min_iter: 25
+  eta: 3
+  min_iter: 20
 
 run_cap: 50

@@ -34,7 +34,7 @@ class CorInfoMax(BaseMethod):
             nn.Linear(proj_hidden_dim, proj_hidden_dim),
             nn.BatchNorm1d(proj_hidden_dim),
             nn.ReLU(),
-            nn.Linear(proj_hidden_dim, proj_output_dim),
+            nn.Linear(proj_hidden_dim, proj_output_dim)
         )
 
         self.loss = CorInfoMax_Loss(output_dim=proj_output_dim, 
@@ -112,6 +112,9 @@ class CorInfoMax(BaseMethod):
         class_loss = out["loss"]
         z1, z2 = out["z"]
 
+        # normalize z1 and z2
+        z1 = nn.functional.normalize(z1, p=2)
+        z2 = nn.functional.normalize(z2, p=2)
         loss_vals = self.loss(z1, z2)
 
         self.log("train_cov_loss", loss_vals["cov"], sync_dist=True)

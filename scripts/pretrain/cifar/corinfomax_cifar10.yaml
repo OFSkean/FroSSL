@@ -11,29 +11,29 @@ hydra:
   run:
     dir: .
 
-name: "corinfomax-stl10" # change here for cifar100
+name: "corinfomax-cifar10" # change here for cifar100
 method: "corinfomax"
 backbone:
   name: "resnet18"
 method_kwargs:
-  proj_hidden_dim: 4096
-  proj_output_dim: 256
+  proj_hidden_dim: 2048
+  proj_output_dim: 64
   R_ini: 1.0          # coefficient of initial covariance
   la_R: 1e-2         # forgetting factor for covariance
   la_mu: 1e-2        # forgetting factor for mean
   R_eps_weight: 1e-6 # diagonal perturbation factor of covariance matrix R1
-  alpha_tradeoff: 500 # tradeoff coefficient for invariance loss
+  alpha_tradeoff: 250 # tradeoff coefficient for invariance loss
 
 data:
-  dataset: stl10 # change here for cifar100
-  train_path: "./datasets/stl10"
-  val_path: "./datasets/stl10"
+  dataset: cifar10 # change here for cifar100
+  train_path: "./datasets"
+  val_path: "./datasets"
   format: "image_folder"
-  num_workers: 4
+  num_workers: 8
 optimizer:
   name: "lars"
   batch_size: 256
-  lr: 0.5
+  lr: 0.3
   classifier_lr: 0.1
   weight_decay: 1e-4
   kwargs:
@@ -50,7 +50,7 @@ auto_resume:
   enabled: True
 
 # overwrite PL stuff
-max_epochs: 500
+max_epochs: 1000
 devices: [0]
 sync_batchnorm: True
 accelerator: "gpu"
