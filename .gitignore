@@ -11,6 +11,8 @@ auto_umap/
 
 # datasets dir
 datasets/
+./datasets
+
 # saved models
 *.pt
 *.pth
