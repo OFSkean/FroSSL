@@ -24,8 +24,7 @@ class FroSSL(BaseMethod):
 
         self.alpha: float = cfg.method_kwargs.alpha
         self.kernel_type: str = cfg.method_kwargs.kernel_type
-        self.entropy_cutoff: float = cfg.method_kwargs.entropy_cutoff
-        self.cutoff_type: str = cfg.method_kwargs.cutoff_type
+        self.invariance_weight: float = cfg.method_kwargs.invariance_weight
 
         proj_hidden_dim: int = cfg.method_kwargs.proj_hidden_dim
         proj_output_dim: int = cfg.method_kwargs.proj_output_dim
@@ -62,8 +61,7 @@ class FroSSL(BaseMethod):
 
         cfg.method_kwargs.alpha = omegaconf_select(cfg, "method_kwargs.alpha", 1.01)
         cfg.method_kwargs.kernel_type = omegaconf_select(cfg, "method_kwargs.scale_loss", "linear")
-        cfg.method_kwargs.entropy_cutoff = omegaconf_select(cfg, "method_kwargs.entropy_cutoff", 0.2)
-        cfg.method_kwargs.cutoff_type = omegaconf_select(cfg, "method_kwargs.cutoff_type", "linear")
+        cfg.method_kwargs.invariance_weight = omegaconf_select(cfg, "method_kwargs.invariance_weight", 1.0)
         cfg.force_same_projector_size = omegaconf_select(cfg, "method_kwargs.force_same_projector_size", False)
         return cfg
 
@@ -109,21 +107,12 @@ class FroSSL(BaseMethod):
         class_loss = out["loss"]
         z = out["z"]
 
-        if self.cutoff_type == "linear":
-            entropy_weight = max(self.entropy_cutoff, 1 - (self.trainer.current_epoch / self.trainer.max_epochs))
-        elif self.cutoff_type == "constant":
-            entropy_weight = self.entropy_cutoff
-        else:
-            raise NotImplementedError(f"{self.cutoff_type} not implemented")
-        
-        self.log("entropy_weight", entropy_weight, on_epoch=True, sync_dist=True)
-
         if len(z) == 2:
             z1 = z[0]
             z2 = z[1]
-            frossl_loss = frossl_loss_func(z1, z2, kernel_type=self.kernel_type, alpha=self.alpha, entropy_weight=entropy_weight, logger=self.log)
+            frossl_loss = frossl_loss_func(z1, z2, kernel_type=self.kernel_type, alpha=self.alpha, invariance_weight=self.invariance_weight, logger=self.log)
         else:
-            frossl_loss = multiview_frossl_loss_func(z, entropy_weight=entropy_weight, logger=self.log)
+            frossl_loss = multiview_frossl_loss_func(z, invariance_weight=self.invariance_weight, logger=self.log)
             
         self.log("train_frossl_loss", frossl_loss, on_epoch=True, sync_dist=True)
         

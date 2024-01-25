@@ -1,25 +1,44 @@
-tradeoffs=(0.4 0.5 0.6 0.7 0.8 0.9 1.0)
-wandbids=("olzjv7fn"  "lazu0b2i" "4h3ncy2b" "kimbyiui" "u0y89p6w" "wil8ivaf" "cb2qicbn")
-model_folder_name="8view_constant_sweep"
-folder_prefix="constant-"
+#tradeoffs=(0.4 0.5 0.6 0.7 0.8 0.9 1.0)
 
+wandbids=("vicreg/jegp7rzs" "byol/230nmp0t" "mmcr/iple3ere" "wmse/eqhafr20" "swav/7s2n7pm6")
+#wandbids=("dino/urt3o574" "corinfomax/axxtovsi" "searmse/wy0vxvcg" "barlow/4049ryr3")
+model_folder_name="tiny_imagenet_method_sweep"
+dataset="tiny-imagenet"
+backbone="resnet50"
 mkdir trained_models/${model_folder_name}
 
-arraylength=${#tradeoffs[@]}
+arraylength=${#wandbids[@]}
 
 for (( i=0; i<${arraylength}; i++ ));
 do
-    experiment_name="frossl-8view-constant-${tradeoffs[i]}"
+    method_name=$(echo ${wandbids[i]} |cut -d/ -f 1)
+    wandbid=$(echo ${wandbids[i]} |cut -d/ -f 2)
+    experiment_name="$method_name-tiny"
 
-    lcc_baseline_folder="/home/ofsk222/projects/frossl/solo-learn/trained_models/searmse/${wandbids[i]}"
-    new_folder_name="trained_models/${model_folder_name}/$folder_prefix${tradeoffs[i]}"
+    folder_prefix="$experiment_name"
+    lcc_baseline_folder="/home/ofsk222/projects/frossl/solo-learn/trained_models/${wandbids[i]}"
+    new_folder_name="trained_models/${model_folder_name}/$folder_prefix"
 
-    echo "$experiment_name - Copying tradeoff ${tradeoffs[i]} with wandb id ${wandbids[i]}"
+    if [ -d "$new_folder_name" ]; then
+        echo "$new_folder_name already exists.... skipping"
+        continue
+    fi
+
+    # copying the model from LCC
+    echo "$experiment_name - Copying ${wandbids[i]}"
     scp -r ofsk222@lcc.uky.edu:$lcc_baseline_folder ${new_folder_name}
 
-    checkpoint_path=$(find ${new_folder_name} -name "fro*")
+    checkpoint_path=$(find ${new_folder_name} -name "*.ckpt")
     echo "$experiment_name - Training linear probe"
-    echo "checkpoint path - $checkpoint_path"
-    ./linear.sh $experiment_name ${tradeoffs[i]} $checkpoint_path
+    echo "checkpoint path - $checkpoint_path" 
+    echo "$checkpoint_path" > last_ckpt.txt
+    
+    # # train linear probe
+    python3 -u main_linear.py \
+        --config-path "scripts/linear/$dataset" \
+        --config-name "$method_name" \
+        ++name="$experiment_name-linear" \
+        ++backbone.name="$backbone" \
+    
 
 done

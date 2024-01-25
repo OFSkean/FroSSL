@@ -9,7 +9,7 @@ import repitl.difference_of_entropies as dent
 
 # two view loss
 def frossl_loss_func(
-    z_a: torch.Tensor, z_b: torch.Tensor, kernel_type: str, alpha: float, entropy_weight=1, logger=None
+    z_a: torch.Tensor, z_b: torch.Tensor, kernel_type: str, alpha: float, invariance_weight=1, logger=None
 ) -> torch.Tensor:
     # normalize repr. along the batch dimension
     z_a = (z_a - z_a.mean(0)) / z_a.std(0) # NxD
@@ -41,7 +41,7 @@ def frossl_loss_func(
     ent_Kb = itl.matrixAlphaEntropy(Kb, alpha=alpha)
     obj_entropy = ent_Ka + ent_Kb
 
-    loss = -mse_loss + obj_entropy*entropy_weight
+    loss = -mse_loss*invariance_weight + obj_entropy
 
     if logger is not None:
         logger(f"entropy", obj_entropy, on_epoch=True, sync_dist=True)
@@ -51,7 +51,7 @@ def frossl_loss_func(
 
 # multi-view loss. same as above but with multiple views
 def multiview_frossl_loss_func(
-    z_list: List[torch.Tensor], entropy_weight=1, logger=None
+    z_list: List[torch.Tensor], invariance_weight=1, logger=None
 ) -> torch.Tensor:
     
     N = z_list[0].size(0)
@@ -87,10 +87,10 @@ def multiview_frossl_loss_func(
             else:
                 cov = (view_embeddings @ view_embeddings.T) / N
 
-            entropy_loss = entropy_weight*itl.matrixAlphaEntropy(cov, alpha=2)
+            entropy_loss = itl.matrixAlphaEntropy(cov, alpha=2)
 
             invariance_loss = torch.nn.MSELoss()(view_embeddings, average_embedding)
-            view_loss = -entropy_loss + invariance_loss
+            view_loss = -entropy_loss + invariance_loss*invariance_weight
             total_loss += view_loss
 
             if logger is not None:

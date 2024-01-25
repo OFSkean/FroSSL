@@ -30,8 +30,7 @@ class EMPFROSSL(BaseMethod):
         self.num_patches_val = cfg.num_patches_val
         self.alpha: float = cfg.method_kwargs.alpha
         self.kernel_type: str = cfg.method_kwargs.kernel_type
-        self.entropy_cutoff: float = cfg.method_kwargs.entropy_cutoff
-        self.cutoff_type: str = cfg.method_kwargs.cutoff_type
+        self.invariance_weight: float = cfg.method_kwargs.invariance_weight
 
 
         # projector
@@ -62,8 +61,7 @@ class EMPFROSSL(BaseMethod):
         cfg.num_patches_val = omegaconf_select(cfg, "method_kwargs.num_crops_val", 20)
         cfg.method_kwargs.alpha = omegaconf_select(cfg, "method_kwargs.alpha", 2)
         cfg.method_kwargs.kernel_type = omegaconf_select(cfg, "method_kwargs.scale_loss", "linear")
-        cfg.method_kwargs.entropy_cutoff = omegaconf_select(cfg, "method_kwargs.entropy_cutoff", 0.2)
-        cfg.method_kwargs.cutoff_type = omegaconf_select(cfg, "method_kwargs.cutoff_type", "linear")
+        cfg.method_kwargs.invariance_weight = omegaconf_select(cfg, "method_kwargs.invariance_weight", 1.0)
 
         return cfg
 
@@ -131,7 +129,7 @@ class EMPFROSSL(BaseMethod):
         self.log_dict(metrics, on_epoch=True, sync_dist=True)
         
         # calculate loss
-        frossl_loss = multiview_frossl_loss_func(z_list, entropy_weight=self.entropy_cutoff)
+        frossl_loss = multiview_frossl_loss_func(z_list, invariance_weight=self.invariance_weight)
 
         self.log("train_frossl_loss", frossl_loss)
 

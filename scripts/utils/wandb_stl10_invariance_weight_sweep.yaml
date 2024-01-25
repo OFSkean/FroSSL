@@ -8,15 +8,23 @@ command:
   - ${program}
   - "--config-path=scripts/pretrain/stl10"
   - "--config-name=frossl.yaml"
-  - "++method_kwargs.force_same_projector_size=True"
   - ${args_no_hyphens}
 
-method: grid
+method: bayes
 metric:
   name: val_acc1
   goal: maximize
 
 parameters:
   # ADJUSTABLE PARAMETERS
-  method_kwargs.proj_hidden_dim:
-    values: [128, 256, 512, 1024, 2048, 4096]
+  method_kwargs.invariance_weight:
+    min: 0
+    max: 100
+
+early_terminate:
+  type: hyperband
+  s: 3
+  eta: 4
+  min_iter: 25
+
+run_cap: 50

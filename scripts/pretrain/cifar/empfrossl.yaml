@@ -20,7 +20,7 @@ method_kwargs:
   proj_output_dim: 512
   alpha: 2
   kernel_type: "linear"
-  entropy_cutoff: 1.0
+  invariance_weight: 1.0
   augment_val: True
 data:
   dataset: cifar10 # change here for cifar100
