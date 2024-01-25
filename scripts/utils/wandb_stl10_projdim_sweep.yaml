@@ -1,0 +1,22 @@
+program: main_pretrain.py
+project: solo-learn
+name: stl10_projdim_sweep
+
+command:
+  - ${env}
+  - python3
+  - ${program}
+  - "--config-path=scripts/pretrain/stl10"
+  - "--config-name=frossl.yaml"
+  - "++method_kwargs.force_same_projector_size=True"
+  - ${args_no_hyphens}
+
+method: grid
+metric:
+  name: val_acc1
+  goal: maximize
+
+parameters:
+  # ADJUSTABLE PARAMETERS
+  method_kwargs.proj_hidden_dim:
+    values: [128, 256, 512, 1024, 2048, 4096]

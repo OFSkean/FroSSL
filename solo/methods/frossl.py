@@ -29,6 +29,9 @@ class FroSSL(BaseMethod):
 
         proj_hidden_dim: int = cfg.method_kwargs.proj_hidden_dim
         proj_output_dim: int = cfg.method_kwargs.proj_output_dim
+        if cfg.force_same_projector_size:
+            print("Forcing same projector size!!!!!")
+            proj_output_dim = proj_hidden_dim
 
         # projector
         self.projector = nn.Sequential(
@@ -61,6 +64,7 @@ class FroSSL(BaseMethod):
         cfg.method_kwargs.kernel_type = omegaconf_select(cfg, "method_kwargs.scale_loss", "linear")
         cfg.method_kwargs.entropy_cutoff = omegaconf_select(cfg, "method_kwargs.entropy_cutoff", 0.2)
         cfg.method_kwargs.cutoff_type = omegaconf_select(cfg, "method_kwargs.cutoff_type", "linear")
+        cfg.force_same_projector_size = omegaconf_select(cfg, "method_kwargs.force_same_projector_size", False)
         return cfg
 
     @property
