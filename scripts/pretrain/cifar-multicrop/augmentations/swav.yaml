@@ -1,13 +1,13 @@
 - rrc:
     enabled: True
-    crop_min_scale: 0.2
+    crop_min_scale: 0.75
     crop_max_scale: 1.0
   color_jitter:
     prob: 0.8
-    brightness: 0.6
-    contrast: 0.6
-    saturation: 0.6
-    hue: 0.2
+    brightness: 0.4
+    contrast: 0.4
+    saturation: 0.4
+    hue: 0.1
   grayscale:
     prob: 0.2
   gaussian_blur:
@@ -23,14 +23,14 @@
 
 - rrc:
     enabled: True
-    crop_min_scale: 0.2
+    crop_min_scale: 0.75
     crop_max_scale: 1.0
   color_jitter:
     prob: 0.8
-    brightness: 0.6
-    contrast: 0.6
-    saturation: 0.6
-    hue: 0.2
+    brightness: 0.4
+    contrast: 0.4
+    saturation: 0.4
+    hue: 0.1
   grayscale:
     prob: 0.2
   gaussian_blur:
@@ -46,14 +46,14 @@
 
 - rrc:
     enabled: True
-    crop_min_scale: 0.08
-    crop_max_scale: 0.5
+    crop_min_scale: 0.3
+    crop_max_scale: 0.75
   color_jitter:
     prob: 0.8
-    brightness: 0.8
-    contrast: 0.8
-    saturation: 0.8
-    hue: 0.2
+    brightness: 0.4
+    contrast: 0.4
+    saturation: 0.84
+    hue: 0.1
   grayscale:
     prob: 0.2
   gaussian_blur:

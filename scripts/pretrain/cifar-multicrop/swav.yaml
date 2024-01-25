@@ -19,10 +19,10 @@ method_kwargs:
   proj_hidden_dim: 2048
   queue_size: 3840
   proj_output_dim: 128
-  num_prototypes: 3000
+  num_prototypes: 300
   epoch_queue_starts: 50
   freeze_prototypes_epochs: 2
-  temperature: 0.1
+  temperature: 0.2
 data:
   dataset: cifar10 # change here for cifar100
   train_path: "./datasets"
