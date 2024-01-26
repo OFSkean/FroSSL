@@ -112,7 +112,7 @@ class FroSSL(BaseMethod):
             z2 = z[1]
             frossl_loss = frossl_loss_func(z1, z2, kernel_type=self.kernel_type, alpha=self.alpha, invariance_weight=self.invariance_weight, logger=self.log)
         else:
-            frossl_loss = multiview_frossl_loss_func(z, invariance_weight=self.invariance_weight, logger=self.log)
+            frossl_loss = multiview_frossl_loss_func(z, invariance_weight=self.invariance_weight)
             
         self.log("train_frossl_loss", frossl_loss, on_epoch=True, sync_dist=True)
         
