@@ -1,0 +1,23 @@
+program: main_pretrain.py
+project: frossl-paper
+name: stl10_mmcr_view_sweep
+
+command:
+  - ${env}
+  - python3
+  - ${program}
+  - "--config-path=scripts/pretrain/stl10"
+  - "--config-name=mmcr.yaml"
+  - ${args_no_hyphens}
+
+method: grid
+metric:
+  name: val_acc1
+  goal: maximize
+
+parameters:
+  augmentations.0.num_crops:
+    values:
+      - 2
+      - 4
+      - 8

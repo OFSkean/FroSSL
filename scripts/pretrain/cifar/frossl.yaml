@@ -1,6 +1,6 @@
 defaults:
   - _self_
-  - augmentations: asymmetric.yaml
+  - augmentations: symmetric_weak.yaml
   - wandb: private.yaml
   - override hydra/hydra_logging: disabled
   - override hydra/job_logging: disabled
@@ -20,13 +20,14 @@ method_kwargs:
   proj_output_dim: 1024
   alpha: 2
   kernel_type: "linear"
+  invariance_weight: 1.0
 
 data:
   dataset: cifar10 # change here for cifar100
   train_path: "./datasets"
   val_path: "./datasets"
   format: "image_folder"
-  num_workers: 4
+  num_workers: 8
 optimizer:
   name: "lars"
   batch_size: 256
