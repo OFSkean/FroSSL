@@ -6,9 +6,11 @@ command:
   - ${env}
   - python3
   - ${program}
-  - "--config-path=scripts/pretrain/stl10"
-  - "--config-name=mmcr.yaml"
+  - "--config-path=scripts/pretrain/cifar"
+  - "--config-name=frossl.yaml"
   - "++data.dataset=cifar10"
+  - "++data.train_path=./datasets/cifar10"
+  - "++data.val_path=./datasets/cifar10"
   - ${args_no_hyphens}
 
 method: grid
@@ -19,7 +21,6 @@ metric:
 parameters:
   augmentations.0.num_crops:
     values:
-      - 2
       - 4
       - 8
   method_kwargs.invariance_weight:
