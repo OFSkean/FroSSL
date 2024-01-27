@@ -26,6 +26,7 @@ from lightning.pytorch import Trainer, seed_everything
 from lightning.pytorch.callbacks import LearningRateMonitor
 from lightning.pytorch.loggers.wandb import WandbLogger
 from lightning.pytorch.strategies.ddp import DDPStrategy
+from lightning.pytorch.profilers import AdvancedProfiler, SimpleProfiler
 from omegaconf import DictConfig, OmegaConf
 from solo.args.pretrain import parse_cfg
 from solo.data.classification_dataloader import prepare_data as prepare_data_classification
@@ -234,10 +235,22 @@ def main(cfg: DictConfig):
         lr_monitor = LearningRateMonitor(logging_interval="step")
         callbacks.append(lr_monitor)
 
+    # profiler setup
+    if cfg.profiler.enabled:
+        assert (
+            cfg.profiler.strategy in ["simple", "advanced"]
+        ), "Profiler strategy must be 'simple' or 'advanced'."
+
+        if cfg.profiler.strategy == "simple":
+            profiler = SimpleProfiler(dirpath=cfg.profiler.dirpath, filename=cfg.profiler.filename)
+        elif cfg.profiler.strategy == "advanced":
+            profiler = AdvancedProfiler(dirpath=cfg.profiler.dirpath, filename=cfg.profiler.filename)
+
     trainer_kwargs = OmegaConf.to_container(cfg)
     # we only want to pass in valid Trainer args, the rest may be user specific
     valid_kwargs = inspect.signature(Trainer.__init__).parameters
     trainer_kwargs = {name: trainer_kwargs[name] for name in valid_kwargs if name in trainer_kwargs}
+
     trainer_kwargs.update(
         {
             "logger": wandb_logger if cfg.wandb.enabled else None,
@@ -246,8 +259,10 @@ def main(cfg: DictConfig):
             "strategy": DDPStrategy(find_unused_parameters=False)
             if cfg.strategy == "ddp"
             else cfg.strategy,
+            "profiler": profiler if cfg.profiler.enabled else None,
         }
     )
+
     trainer = Trainer(**trainer_kwargs)
 
     if cfg.data.format == "dali":
@@ -261,6 +276,13 @@ def main(cfg: DictConfig):
         # save ckpt name to file
         with open("last_ckpt.txt", "w") as f:
             f.write(str(ckpt.last_ckpt))
+
+    if cfg.profiler.enabled:
+        print(trainer.profiler.summary())
+
+        max_memory_bytes = torch.cuda.max_memory_allocated()
+        max_memory_gb = max_memory_bytes / 1e9
+        print(max_memory_gb, "GB")
 
 if __name__ == "__main__":
     main()

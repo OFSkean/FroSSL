@@ -98,6 +98,13 @@ def add_and_assert_lightning_cfg(cfg: omegaconf.DictConfig) -> omegaconf.DictCon
     cfg.resume_from_checkpoint = omegaconf_select(cfg, "resume_from_checkpoint", None)
     cfg.strategy = omegaconf_select(cfg, "strategy", None)
 
+    # lightning profiler config
+    cfg.profiler = omegaconf_select(cfg, "profiler", {})
+    cfg.profiler.enabled = omegaconf_select(cfg, "profiler.enabled", False)
+    cfg.profiler.strategy = omegaconf_select(cfg, "profiler.strategy", "simple")
+    cfg.profiler.dirpath = omegaconf_select(cfg, "profiler.dirpath", "./logs")
+    cfg.profiler.filename = omegaconf_select(cfg, "profiler.filename", "profiler_outputs.txt")
+    
     return cfg
 
 
