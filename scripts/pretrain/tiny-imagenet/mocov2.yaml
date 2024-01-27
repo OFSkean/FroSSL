@@ -11,7 +11,7 @@ hydra:
   run:
     dir: .
 
-name: "mocov2plus-stl10" # change here for cifar100
+name: "mocov2plus-tiny" # change here for cifar100
 method: "mocov2plus"
 backbone:
   name: "resnet18"

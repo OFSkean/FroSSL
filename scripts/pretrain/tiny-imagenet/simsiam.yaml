@@ -11,7 +11,7 @@ hydra:
   run:
     dir: .
 
-name: "simsiam-stl10" # change here for cifar100
+name: "simsiam-tiny" # change here for cifar100
 method: "simsiam"
 backbone:
   name: "resnet18"
