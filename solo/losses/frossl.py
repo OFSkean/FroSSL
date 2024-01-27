@@ -2,10 +2,8 @@
 from typing import Any, List, Sequence, Dict
 import torch
 import torch.distributed as dist
-
+import torch.nn.functional as F
 import repitl.kernel_utils as ku
-import repitl.matrix_itl as itl
-import repitl.difference_of_entropies as dent
 
 # two view loss
 def frossl_loss_func(
@@ -37,8 +35,8 @@ def frossl_loss_func(
         raise NotImplementedError('Kernel type not implemented')
 
     # calculate entropy loss
-    ent_Ka = itl.matrixAlphaEntropy(Ka, alpha=alpha)
-    ent_Kb = itl.matrixAlphaEntropy(Kb, alpha=alpha)
+    ent_Ka = -2*torch.log(torch.linalg.norm(Ka, ord='fro'))
+    ent_Kb = -2*torch.log(torch.linalg.norm(Kb, ord='fro'))
     obj_entropy = ent_Ka + ent_Kb
 
     loss = -mse_loss*invariance_weight + obj_entropy
@@ -60,41 +58,32 @@ def multiview_frossl_loss_func(
     # normalize repr. along the batch dimension
     normalized_z_list = []
     for z in z_list:
-        normalized_z = (z - z.mean(0)) / z.std(0) # NxD
-        normalized_z =  (D**0.5) * normalized_z / torch.norm(normalized_z, dim=0)  # scale down to sqrt(d) sphere
+        normalized_z =  (D**0.5) * F.normalize(z)
         normalized_z_list.append(normalized_z)
 
     average_embedding = torch.mean(torch.stack(normalized_z_list), dim=0)
 
-    average_only = False
-    if average_only:
-        total_loss = 0
+    total_loss = 0
+    for view_idx in range(len(normalized_z_list)):
+        view_embeddings = normalized_z_list[view_idx]
+
         if N > D:
-            cov = (average_embedding.T @ average_embedding) / N
+            cov = (view_embeddings.T @ view_embeddings) / D
         else:
-            cov = (average_embedding @ average_embedding.T) / N
+            cov = (view_embeddings @ view_embeddings.T) / N
 
-        entropy_loss = itl.matrixAlphaEntropy(cov, alpha=2)
-        total_loss -= entropy_loss
-        
-    else:
-        total_loss = 0
-        for view_idx in range(len(normalized_z_list)):
-            view_embeddings = normalized_z_list[view_idx]
+        fro_norm = torch.linalg.norm(cov, ord='fro')
 
-            if N > D:
-                cov = (view_embeddings.T @ view_embeddings) / N
-            else:
-                cov = (view_embeddings @ view_embeddings.T) / N
+        entropy_loss = -2*torch.log(fro_norm) # bring frobenius square outside log
 
-            entropy_loss = itl.matrixAlphaEntropy(cov, alpha=2)
+        invariance_loss = torch.nn.MSELoss()(view_embeddings, average_embedding)
 
-            invariance_loss = torch.nn.MSELoss()(view_embeddings, average_embedding)
-            view_loss = -entropy_loss + invariance_loss*invariance_weight
-            total_loss += view_loss
+        view_loss = -entropy_loss + invariance_loss*invariance_weight
+        total_loss += view_loss
 
-            if logger is not None:
-                logger(f"entropy_{view_idx}", entropy_loss, on_epoch=True, sync_dist=True)
-                logger(f"invariance_{view_idx}", invariance_loss, on_epoch=True, sync_dist=True)
+        if logger is not None and view_idx == 0:
+            logger(f"fro_norm_{view_idx}", entropy_loss, sync_dist=True)
+            logger(f"entropy_{view_idx}", entropy_loss, sync_dist=True)
+            logger(f"invariance_{view_idx}", invariance_loss, sync_dist=True)
 
     return total_loss
