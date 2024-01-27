@@ -1,1 +1,2 @@
-./pretrain_then_linear.sh barlow-tiny tiny-imagenet barlow 1.0 2
+./pretrain_then_linear.sh barlow-tiny tiny-imagenet barlow 4     # experiment name, dataset, method, num augmentations
+

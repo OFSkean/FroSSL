@@ -19,6 +19,7 @@ datasets/
 *.ckpt
 *.tar
 *.pkl
+last_ckpt.txt
 
 bash_files/*.png
 bash_files/*.jpg

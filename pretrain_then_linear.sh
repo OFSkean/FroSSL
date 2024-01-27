@@ -7,9 +7,8 @@ fi
 EXPERIMENT_NAME="$1"
 DATASET="${2:-stl10}"  #second argument is dataset, default is stl10
 CONFIG_NAME="${3:-searmse.yaml}" #third argument is dataset, default is searmse
-ENTROPY_CUTOFF="$4"
-NUM_AUGMENTATIONS="$5"
-BACKBONE="resnet50"
+NUM_AUGMENTATIONS="$4"
+BACKBONE="resnet18"
 
 PRETRAIN_CONFIG_PATH="scripts/pretrain/$DATASET"
 LINEAR_CONFIG_PATH="scripts/linear/$DATASET"
@@ -29,8 +28,7 @@ python3 -u main_pretrain.py \
     --config-name $CONFIG_NAME \
     ++name="$EXPERIMENT_NAME" \
     ++backbone.name=$BACKBONE \
-    #     ++method_kwargs.entropy_cutoff=$ENTROPY_CUTOFF \
-    # ++augmentations.0.num_crops=$NUM_AUGMENTATIONS \
+    ++augmentations.0.num_crops=$NUM_AUGMENTATIONS \
 
 # get pretrained path from last_ckpt.txt file
 TRAINED_CHECKPOINT_PATH=$(cat last_ckpt.txt)
