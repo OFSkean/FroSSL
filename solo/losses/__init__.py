@@ -34,7 +34,7 @@ from solo.losses.vicreg import vicreg_loss_func
 from solo.losses.wmse import wmse_loss_func
 from solo.losses.frossl import frossl_loss_func
 from solo.losses.corinfomax import CorInfoMax_Loss
-from solo.losses.mmcr import maximum_manifold_capacity
+from solo.losses.mmcr import maximum_manifold_capacity_loss_func
 
 __all__ = [
     "barlow_loss_func",

@@ -96,6 +96,7 @@ def main(cfg: DictConfig):
             data_format=val_data_format,
             batch_size=cfg.optimizer.batch_size,
             num_workers=cfg.data.num_workers,
+            download=False
         )
 
     # pretrain dataloader
@@ -150,6 +151,7 @@ def main(cfg: DictConfig):
             data_format=cfg.data.format,
             no_labels=cfg.data.no_labels,
             data_fraction=cfg.data.fraction,
+            download=False
         )
         train_loader = prepare_dataloader(
             train_dataset, batch_size=cfg.optimizer.batch_size, num_workers=cfg.data.num_workers
@@ -278,11 +280,13 @@ def main(cfg: DictConfig):
             f.write(str(ckpt.last_ckpt))
 
     if cfg.profiler.enabled:
-        print(trainer.profiler.summary())
-
-        max_memory_bytes = torch.cuda.max_memory_allocated()
+        max_memory_bytes = torch.cuda.max_memory_reserved()
         max_memory_gb = max_memory_bytes / 1e9
-        print(max_memory_gb, "GB")
+
+        # append memory usage to profiler file
+        with open(os.path.join(cfg.profiler.dirpath, f'fit-{cfg.profiler.filename}.txt'), "a") as f:
+            f.write(f"Max memory used: {max_memory_bytes} bytes\n")
+            f.write(f"Max memory used: {max_memory_gb} GB\n")
 
 if __name__ == "__main__":
     main()

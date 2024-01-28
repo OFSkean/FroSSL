@@ -3,7 +3,7 @@ from typing import Any, List, Sequence, Dict
 import torch
 import torch.distributed as dist
 
-def maximum_manifold_capacity(z_list: List[torch.Tensor]) -> torch.Tensor:
+def maximum_manifold_capacity_loss_func(z_list: List[torch.Tensor]) -> torch.Tensor:
     # normalize repr. along the batch dimension
     normalized_z_list = []
     for z in z_list:

@@ -3,7 +3,7 @@ from typing import Any, List, Sequence, Dict
 import omegaconf
 import torch
 import torch.nn as nn
-from solo.losses.mmcr import maximum_manifold_capacity
+from solo.losses.mmcr import maximum_manifold_capacity_loss_func
 from solo.methods.base import BaseMethod
 from solo.utils.misc import omegaconf_select
 import torch.nn.functional as F
@@ -87,7 +87,7 @@ class MMCR(BaseMethod):
         class_loss = out["loss"]
         z = out["z"]
     
-        mmcr_loss = maximum_manifold_capacity(z)
+        mmcr_loss = maximum_manifold_capacity_loss_func(z)
         self.log("train_mmcr_loss", mmcr_loss, on_epoch=True, sync_dist=True)
         
         return mmcr_loss + class_loss

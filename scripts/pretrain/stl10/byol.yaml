@@ -24,8 +24,8 @@ momentum:
   final_tau: 1.0
 data:
   dataset: stl10 # change here for cifar100
-  train_path: "./datasets"
-  val_path: "./datasets"
+  train_path: "./datasets/stl10"
+  val_path: "./datasets/stl10"
   format: "image_folder"
   num_workers: 8
 optimizer:
