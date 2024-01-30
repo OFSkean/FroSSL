@@ -1,13 +1,24 @@
 import subprocess
 import os
 import pickle
+import itertools
 
+#methods = ["frossl", "mmcr", "barlow", "simclr", "byol", "mocov2", "simsiam", "corinfomax", "vicreg", "swav", "wmse", "dino"]
+methods = ["frossl", "mmcr"]
+multiaug_compatible_methods = ["frossl", "mmcr"]
 
-methods = ["frossl", "mmcr", "barlow", "simclr", "byol", "mocov2", "simsiam", "corinfomax", "vicreg"]
-
-default_batch_size = 256
+default_batch_size = 512
 default_proj_dim = 1024
 default_num_augs = 2
+
+batch_sizes_list = [512]
+proj_dims_list = [1024]
+augs_list = [2, 4, 8]
+
+method_batch_sweep = list(itertools.product(methods, batch_sizes_list, [default_proj_dim], [default_num_augs]))
+method_proj_sweep = list(itertools.product(methods, [default_batch_size], proj_dims_list, [default_num_augs]))
+method_aug_sweep = list(itertools.product(multiaug_compatible_methods, [default_batch_size], [default_proj_dim], augs_list))
+combos = method_batch_sweep + method_proj_sweep + method_aug_sweep
 
 def parse_file(filename):
     # parse through log file for memory and time details
@@ -21,7 +32,8 @@ def parse_file(filename):
                 memory_gb = line.split(" ")[-2]
 
             # loss function time
-            if "loss_func" in line:
+            # corinfomax uses CorInfoMax_Loss class, not func
+            if "loss_func" in line or 'corinfomax.py:36(forward)' in line:
                 parsed_line = [x for x in line.strip().split(" ") if x != '']
                 loss_func_avg_time = parsed_line[4]
 
@@ -48,12 +60,14 @@ else:
     total_run_stats = {}
 
 # train each method with default hyperparameters
-for method in methods:
+for method_combo in combos:
+    method, batch_size, proj_dim, num_augs = method_combo
+
     try:
-        filename_prefix = f"{method}-{default_batch_size}-{default_proj_dim}-{default_num_augs}"
-        batch_size=str(default_batch_size)
-        proj_dim=str(default_proj_dim)
-        num_augs=str(default_num_augs)
+        filename_prefix = f"{method}-{batch_size}-{proj_dim}-{num_augs}"
+        batch_size=str(batch_size)
+        proj_dim=str(proj_dim)
+        num_augs=str(num_augs)
 
         # check if run exists in total_run_stats
         if filename_prefix in total_run_stats:
