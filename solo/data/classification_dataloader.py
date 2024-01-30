@@ -25,6 +25,9 @@ import torchvision
 from timm.data import create_transform
 from timm.data.constants import IMAGENET_DEFAULT_MEAN, IMAGENET_DEFAULT_STD
 from torch import nn
+import torch
+import numpy as np
+import tqdm
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 from torchvision.datasets import STL10, ImageFolder
@@ -292,6 +295,36 @@ def prepare_dataloaders(
     )
     return train_loader, val_loader
 
+def convert_image_dataset_to_embedding_dataset(dataloader,ssl_model, desc):
+    embeddings = []
+    labels = []
+    shuffle = "val" not in desc
+
+    with torch.no_grad():
+        ssl_model.eval()
+        ssl_model.cuda()
+
+
+        for batch in tqdm.tqdm(dataloader, desc=f"Converting {desc} set to embeddings"):
+            x, y = batch
+            x = x.cuda(non_blocking=True)
+        
+            embedding = ssl_model.backbone(x)
+
+            embeddings.extend(embedding.cpu().detach().squeeze().numpy())
+            labels.extend(y.cpu().detach().squeeze().numpy())
+
+    
+    embeddings = torch.tensor(np.array(embeddings))
+    labels = torch.tensor(np.array(labels), dtype=torch.int64)
+    tensor_dataset = torch.utils.data.TensorDataset(embeddings, labels)
+
+    return torch.utils.data.DataLoader(tensor_dataset, 
+                                       batch_size=dataloader.batch_size, 
+                                       shuffle=shuffle, 
+                                       num_workers=dataloader.num_workers, 
+                                       pin_memory=dataloader.pin_memory, 
+                                       drop_last=dataloader.drop_last)
 
 def prepare_data(
     dataset: str,
@@ -305,7 +338,8 @@ def prepare_data(
     auto_augment: bool = False,
     train_pipeline: Optional[Callable] = None,
     val_pipeline: Optional[Callable] = None,
-
+    precompute_features: Optional[str] = None,
+    model: Optional[str] = None,
 ) -> Tuple[DataLoader, DataLoader]:
     """Prepares transformations, creates dataset objects and wraps them in dataloaders.
 
@@ -368,4 +402,11 @@ def prepare_data(
         batch_size=batch_size,
         num_workers=num_workers,
     )
+
+    if precompute_features:
+        assert model is not None
+
+        train_loader = convert_image_dataset_to_embedding_dataset(train_loader, model, desc="precomputing train dataloader")
+        val_loader = convert_image_dataset_to_embedding_dataset(val_loader, model, desc="precomputing val dataloader")
+
     return train_loader, val_loader

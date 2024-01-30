@@ -132,6 +132,7 @@ def main(cfg: DictConfig):
 
     model = modelClass(backbone, loss_func=loss_func, mixup_func=mixup_func, cfg=cfg)
     make_contiguous(model)
+
     # can provide up to ~20% speed up
     if not cfg.performance.disable_channel_last:
         model = model.to(memory_format=torch.channels_last)
@@ -151,6 +152,8 @@ def main(cfg: DictConfig):
         auto_augment=cfg.auto_augment,
         train_pipeline = train_pipeline,
         val_pipeline = val_pipeline,
+        precompute_features=cfg.precompute,
+        model=model,
     )
 
     if cfg.data.format == "dali":

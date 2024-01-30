@@ -122,6 +122,7 @@ class LinearModel(pl.LightningModule):
         # training related
         self.max_epochs: int = cfg.max_epochs
         self.accumulate_grad_batches: Union[int, None] = cfg.accumulate_grad_batches
+        self.precompute: bool = cfg.precompute
 
         # optimizer related
         self.optimizer: str = cfg.optimizer.name
@@ -139,6 +140,7 @@ class LinearModel(pl.LightningModule):
         self.warmup_start_lr: float = cfg.scheduler.warmup_start_lr
         self.warmup_epochs: int = cfg.scheduler.warmup_epochs
         self.scheduler_interval: str = cfg.scheduler.interval
+    
         assert self.scheduler_interval in ["step", "epoch"]
         if self.scheduler_interval == "step":
             logging.warn(
@@ -196,6 +198,7 @@ class LinearModel(pl.LightningModule):
         cfg.performance.disable_channel_last = omegaconf_select(
             cfg, "performance.disable_channel_last", False
         )
+        cfg.precompute = omegaconf_select(cfg, "precompute", False)
 
         return cfg
 
@@ -294,11 +297,14 @@ class LinearModel(pl.LightningModule):
             Dict[str, Any]: a dict containing features and logits.
         """
 
-        if not self.no_channel_last:
+        if not self.precompute and not self.no_channel_last:
             X = X.to(memory_format=torch.channels_last)
 
-        with torch.set_grad_enabled(self.finetune):
-            feats = self.backbone(X)
+        if self.precompute:
+            feats = X
+        else:
+            with torch.set_grad_enabled(self.finetune):
+                feats = self.backbone(X)
 
         logits = self.classifier(feats)
         return {"logits": logits, "feats": feats}
