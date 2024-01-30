@@ -1,13 +1,13 @@
 program: main_pretrain.py
 project: frossl-paper
-name: cifar100_frossl_view_sweep2
+name: cifar100_mmcr_view_sweep
 
 command:
   - ${env}
   - python3
   - ${program}
   - "--config-path=scripts/pretrain/cifar"
-  - "--config-name=frossl.yaml"
+  - "--config-name=mmcr.yaml"
   - "++data.dataset=cifar100"
   - "++data.train_path=./datasets/cifar100"
   - "++data.val_path=./datasets/cifar100"
@@ -21,10 +21,6 @@ metric:
 parameters:
   augmentations.0.num_crops:
     values:
+      - 2
       - 4
       - 8
-  method_kwargs.invariance_weight:
-    values:
-      - 0.9
-      - 1
-      - 1.1

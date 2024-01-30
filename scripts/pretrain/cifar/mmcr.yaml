@@ -1,6 +1,6 @@
 defaults:
   - _self_
-  - augmentations: symmetric.yaml
+  - augmentations: symmetric_weak.yaml
   - wandb: private.yaml
   - override hydra/hydra_logging: disabled
   - override hydra/job_logging: disabled
@@ -11,7 +11,7 @@ hydra:
   run:
     dir: .
 
-name: "mmcr-stl10" # change here for cifar100
+name: "mmcr-cifar10" # change here for cifar100
 method: "mmcr"
 backbone:
   name: "resnet18"
@@ -20,11 +20,11 @@ method_kwargs:
   proj_output_dim: 512
 
 data:
-  dataset: stl10 # change here for cifar100
-  train_path: "./datasets/stl10"
-  val_path: "./datasets/stl10"
+  dataset: cifar10 # change here for cifar100
+  train_path: "./datasets/cifar10"
+  val_path: "./datasets/cifar10"
   format: "image_folder"
-  num_workers: 32
+  num_workers: 16
 optimizer:
   name: "lars"
   batch_size: 256
@@ -45,7 +45,7 @@ auto_resume:
   enabled: False
 
 # overwrite PL stuff
-max_epochs: 500
+max_epochs: 1000
 devices: [0]
 sync_batchnorm: True
 accelerator: "gpu"
