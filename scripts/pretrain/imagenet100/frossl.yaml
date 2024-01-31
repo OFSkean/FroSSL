@@ -16,7 +16,7 @@ method: "frossl"
 backbone:
   name: "resnet18"
 method_kwargs:
-  proj_hidden_dim: 4096
+  proj_hidden_dim: 2048
   proj_output_dim: 1024
   alpha: 2
   kernel_type: "linear"
