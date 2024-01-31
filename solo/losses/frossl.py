@@ -82,7 +82,7 @@ def multiview_frossl_loss_func(
         total_loss += view_loss
 
         if logger is not None and view_idx == 0:
-            logger(f"fro_norm_{view_idx}", entropy_loss, sync_dist=True)
+            logger(f"fro_norm_{view_idx}", fro_norm, sync_dist=True)
             logger(f"entropy_{view_idx}", entropy_loss, sync_dist=True)
             logger(f"invariance_{view_idx}", invariance_loss, sync_dist=True)
 
