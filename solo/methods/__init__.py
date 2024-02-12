@@ -42,6 +42,8 @@ from solo.methods.vicreg import VICReg
 from solo.methods.wmse import WMSE
 from solo.methods.frossl import FroSSL
 from solo.methods.empssl import EMPSSL
+from solo.methods.all4one import All4One
+
 
 METHODS = {
     # base classes
@@ -72,6 +74,7 @@ METHODS = {
     "vibcreg": VIbCReg,
     "vicreg": VICReg,
     "wmse": WMSE,
+    "all4one": All4One,
 }
 
 __all__ = [
@@ -100,4 +103,5 @@ __all__ = [
     "VIbCReg",
     "VICReg",
     "WMSE",
+    "All4One",
 ]
