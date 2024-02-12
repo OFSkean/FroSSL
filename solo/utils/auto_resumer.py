@@ -26,6 +26,7 @@ class AutoResumer:
         "wandb.project",
         "wandb.entity",
         "pretrained_feature_extractor",
+        "method_kwargs"
     ]
 
     def __init__(
