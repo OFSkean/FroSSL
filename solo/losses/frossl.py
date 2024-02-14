@@ -68,9 +68,10 @@ def multiview_frossl_loss_func(
         view_embeddings = normalized_z_list[view_idx]
 
         if N > D:
-            cov = (view_embeddings.T @ view_embeddings) / D
+            cov = view_embeddings.T @ view_embeddings
         else:
-            cov = (view_embeddings @ view_embeddings.T) / N
+            cov = view_embeddings @ view_embeddings.T
+        cov = cov / torch.trace(cov)
 
         fro_norm = torch.linalg.norm(cov, ord='fro')
 
