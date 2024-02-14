@@ -277,7 +277,10 @@ def main(cfg: DictConfig):
     if cfg.checkpoint.enabled:
         # save ckpt name to file
         with open("last_ckpt.txt", "w") as f:
-            f.write(str(ckpt.last_ckpt))
+            if hasattr(ckpt, "last_ckpt"):
+                f.write(str(ckpt.last_ckpt))
+            else:
+                f.write(str(ckpt_path))
 
     if cfg.profiler.enabled:
         max_memory_bytes = torch.cuda.max_memory_reserved()
