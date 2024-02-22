@@ -18,7 +18,7 @@ data:
   dataset: tiny-imagenet
   train_path: "./datasets/tiny-imagenet/tiny-imagenet-200/train"
   val_path: "./datasets/tiny-imagenet/tiny-imagenet-200/test"
-  format: "dali"
+  format: "image_folder"
   num_workers: 8
 optimizer:
   name: "sgd"
@@ -41,4 +41,4 @@ devices: [0]
 sync_batchnorm: True
 accelerator: "gpu"
 strategy: "ddp"
-precision: 16
+precision: 16-mixed

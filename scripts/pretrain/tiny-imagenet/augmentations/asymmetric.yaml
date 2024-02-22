@@ -11,7 +11,7 @@
   grayscale:
     prob: 0.2
   gaussian_blur:
-    prob: 0.0
+    prob: 1.0
   solarization:
     prob: 0.0
   equalization:
@@ -34,7 +34,7 @@
   grayscale:
     prob: 0.2
   gaussian_blur:
-    prob: 0.0
+    prob: 0.1
   solarization:
     prob: 0.2
   equalization:

@@ -10,10 +10,10 @@ hydra:
   run:
     dir: .
 
-name: "byol-tiny-linear"
+name: "corinfomax-tiny-linear"
 backbone:
   name: "resnet18"
-pretrain_method: "byol"
+pretrain_method: "corinfomax"
 data:
   dataset: tiny-imagenet
   train_path: "./datasets/tiny-imagenet/tiny-imagenet-200/train"
