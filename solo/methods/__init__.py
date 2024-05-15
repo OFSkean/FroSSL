@@ -43,7 +43,7 @@ from solo.methods.wmse import WMSE
 from solo.methods.frossl import FroSSL
 from solo.methods.empssl import EMPSSL
 from solo.methods.all4one import All4One
-
+from solo.methods.ivne import IVNE
 
 METHODS = {
     # base classes
@@ -59,6 +59,7 @@ METHODS = {
     "empfrossl": EMPFROSSL,
     "empssl": EMPSSL,
     "frossl": FroSSL,
+    "ivne": IVNE,
     "mae": MAE,
     "mmcr": MMCR,
     "mocov2plus": MoCoV2Plus,
