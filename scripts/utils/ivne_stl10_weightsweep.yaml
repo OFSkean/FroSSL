@@ -1,0 +1,21 @@
+program: main_pretrain.py
+project: frossl-paper
+name: ivne_stl10_weightsweep
+
+command:
+  - ${env}
+  - python3
+  - ${program}
+  - "--config-path=scripts/pretrain/stl10"
+  - "--config-name=ivne.yaml"
+  - ${args_no_hyphens}
+
+method: grid
+metric:
+  name: val_acc1
+  goal: maximize
+
+parameters:
+  # ADJUSTABLE PARAMETERS
+  method_kwargs.alpha_cos:
+    values: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]

@@ -1,6 +1,6 @@
 program: main_pretrain.py
 project: frossl-paper
-name: stl10_invariance_weight_8view
+name: in100_invariance_weight_8view_bs128
 
 command:
   - ${env}
@@ -8,10 +8,11 @@ command:
   - ${program}
   - "--config-path=scripts/pretrain/imagenet100"
   - "--config-name=frossl.yaml"
-  - "++augmentations.0.num_crops=4"
+  - "++augmentations.0.num_crops=8"
+  - "++optimizer.batch_size=128"
   - ${args_no_hyphens}
 
-method: bayes
+method: grid
 metric:
   name: val_acc1
   goal: maximize
@@ -19,4 +20,4 @@ metric:
 parameters:
   # ADJUSTABLE PARAMETERS
   method_kwargs.invariance_weight:
-    values: [0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0]
+    values: [1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4, 2.6, 2.8, 3.0]

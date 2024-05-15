@@ -1,0 +1,23 @@
+program: main_pretrain.py
+project: frossl-paper
+name: ivne_cifar100_sweep
+
+command:
+  - ${env}
+  - python3
+  - ${program}
+  - "--config-path=scripts/pretrain/cifar"
+  - "--config-name=ivne.yaml"
+  - "++data.dataset=cifar100"
+  - "++data.train_path=./datasets/cifar10"
+  - "++data.val_path=./datasets/cifar10"
+  - ${args_no_hyphens}
+
+method: grid
+metric:
+  name: val_acc1
+  goal: maximize
+
+parameters:
+    method_kwargs.alpha_cos:
+      values: [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0]
