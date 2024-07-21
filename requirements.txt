@@ -1,0 +1,13 @@
+numpy==1.25.2
+torch==2.0.1
+torchvision==0.15.2
+einops
+lightning==2.1.2
+torchmetrics==1.3.2
+tqdm
+wandb
+scipy
+timm
+scikit-learn
+hydra-core
+-e git+https://github.com/uk-cliplab/representation-itl.git#egg=representation-itl
