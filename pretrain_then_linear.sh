@@ -24,7 +24,6 @@ LINEAR_CONFIG_PATH="scripts/pretrain/$dataset_config_name"
 echo "Preparing to start experiment with name $EXPERIMENT_NAME"
 echo "on dataset $DATASET"
 echo "with config $CONFIG_NAME"
-echo "with entropy cutoff $ENTROPY_CUTOFF"
 echo "with numaugs $NUM_AUGMENTATIONS"
 echo "with backbone $BACKBONE"
 

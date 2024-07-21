@@ -31,7 +31,7 @@ pip install -r requirements.txt
 ```
 
 ### Datasets
-The datasets CIFAR-10, CIFAR-100, and STL-10 are able to be downloaded automatically by Pytorch. If you want to run on other datasets like tiny-imagenet, some preparation will be required.
+The datasets CIFAR-10, CIFAR-100, and STL-10 are able to be downloaded automatically by Pytorch. If you want to run on other datasets like tiny-imagenet, some preparation will be required. By default, the data is assumed to live in `./datasets/{dataset-name}`. To change this, you have to adjust the configuration files which can be found in `./scripts/pretrain/*`.
 
 #### Tiny ImageNet
 We have provided an installation script for Tiny ImageNet that can be used like:
