@@ -10,8 +10,7 @@ This is the official PyTorch implementation of the [FroSSL paper](https://arxiv.
   year={2023}
 }
 ```
-
-This implementation started as a fork of the fantastic [solo-learn](https://github.com/vturrisi/solo-learn.git) libary. We are currently working on a pull request to merge our contributions into the library.
+This implementation started as a fork of the fantastic [solo-learn](https://github.com/vturrisi/solo-learn.git) library. We are currently working on a pull request to merge our contributions into the library.
 
 ## Preparation
 ### Installing Requirements
@@ -59,6 +58,10 @@ python make_imagenet100.py full/imagenet/path desired/imagenet100/path
 3. We have provided three scripts to serve as examples for training a model: **run_cifar10.sh**, **run_imagenet100.sh**, **run_tiny.sh**. These are currently configured to run FroSSL on a specific dataset. 
 
 4. Run an above script (or modify it) like  `bash ./run_cifar10.sh`
+
+
+## Objective Function
+The FroSSL objective function is [implemented here](https://github.com/OFSkean/FroSSL/blob/main/solo/losses/frossl.py) and [used here](https://github.com/OFSkean/FroSSL/blob/main/solo/methods/frossl.py).
 
 ## Let Us Know
 Please open an issue on Github if you encounter any errors or difficulties using this implementation. We are happy to help resolve issues or answer any questions you may have!
