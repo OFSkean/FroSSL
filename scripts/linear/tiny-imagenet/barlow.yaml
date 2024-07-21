@@ -24,7 +24,7 @@ data:
 optimizer:
   name: "sgd"
   batch_size: 256
-  lr: 0.3
+  lr: 0.1
   weight_decay: 0
 scheduler:
   name: "step"

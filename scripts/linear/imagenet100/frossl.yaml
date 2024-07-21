@@ -20,10 +20,10 @@ data:
   train_path: "./datasets/imagenet100/train"
   val_path: "./datasets/imagenet100/val"
   format: "dali"
-  num_workers: 16
+  num_workers: 32
 optimizer:
   name: "sgd"
-  batch_size: 256
+  batch_size: 512
   lr: 0.1
   weight_decay: 0
 scheduler:
@@ -38,7 +38,7 @@ auto_resume:
 
 # overwrite PL stuff
 max_epochs: 100
-devices: [0]
+devices: [0,1]
 sync_batchnorm: True
 accelerator: "gpu"
 strategy: "ddp"

@@ -10,17 +10,17 @@ hydra:
   run:
     dir: .
 
-name: "mmcr-tiny-linear"
+name: "corinfomax-imagenet100-linear"
 pretrained_feature_extractor: None
 backbone:
   name: "resnet18"
-pretrain_method: "mmcr"
+pretrain_method: "corinfomax"
 data:
-  dataset: tiny-imagenet
-  train_path: "./datasets/tiny-imagenet/tiny-imagenet-200/train"
-  val_path: "./datasets/tiny-imagenet/tiny-imagenet-200/test"
-  format: "image_folder"
-  num_workers: 8
+  dataset: imagenet100
+  train_path: "./datasets/imagenet100/train"
+  val_path: "./datasets/imagenet100/val"
+  format: "dali"
+  num_workers: 16
 optimizer:
   name: "sgd"
   batch_size: 256
@@ -34,7 +34,7 @@ checkpoint:
   dir: "trained_models"
   frequency: 1
 auto_resume:
-  enabled: False
+  enabled: True
 
 # overwrite PL stuff
 max_epochs: 100

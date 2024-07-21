@@ -19,11 +19,11 @@ data:
   train_path: "./datasets/tiny-imagenet/tiny-imagenet-200/train"
   val_path: "./datasets/tiny-imagenet/tiny-imagenet-200/test"
   format: "image_folder"
-  num_workers: 8
+  num_workers: 32
 optimizer:
   name: "sgd"
   batch_size: 256
-  lr: 0.3
+  lr: 0.1
   weight_decay: 0
 scheduler:
   name: "step"

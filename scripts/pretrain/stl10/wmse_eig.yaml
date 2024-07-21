@@ -1,5 +1,6 @@
 defaults:
   - _self_
+  - augmentations: symmetric.yaml
   - wandb: private.yaml
   - override hydra/hydra_logging: disabled
   - override hydra/job_logging: disabled
@@ -10,25 +11,31 @@ hydra:
   run:
     dir: .
 
-name: "mmcr-tiny-linear"
-pretrained_feature_extractor: None
+name: "wmse-stl10" # change here for cifar100
+method: "wmse"
 backbone:
   name: "resnet18"
-pretrain_method: "mmcr"
+method_kwargs:
+  proj_hidden_dim: 1024
+  proj_output_dim: 256
+  whitening_size: 256
+  whitening_iters: 4
 data:
-  dataset: tiny-imagenet
-  train_path: "./datasets/tiny-imagenet/tiny-imagenet-200/train"
-  val_path: "./datasets/tiny-imagenet/tiny-imagenet-200/test"
+  dataset: stl10 # change here for cifar100
+  train_path: "./datasets/stl10"
+  val_path: "./datasets/stl10"
   format: "image_folder"
   num_workers: 8
 optimizer:
   name: "sgd"
   batch_size: 256
-  lr: 0.1
-  weight_decay: 0
+  lr: 0.01
+  classifier_lr: 0.1
+  weight_decay: 1e-4
 scheduler:
-  name: "step"
-  lr_decay_steps: [60, 80]
+  name: "warmup_cosine"
+  warmup_start_lr: 0.01
+  warmup_epochs: 0
 checkpoint:
   enabled: True
   dir: "trained_models"
@@ -37,9 +44,9 @@ auto_resume:
   enabled: False
 
 # overwrite PL stuff
-max_epochs: 100
+max_epochs: 5
 devices: [0]
 sync_batchnorm: True
 accelerator: "gpu"
 strategy: "ddp"
-precision: 16-mixed
+precision: 32

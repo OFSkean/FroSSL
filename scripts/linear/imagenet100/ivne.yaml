@@ -10,20 +10,19 @@ hydra:
   run:
     dir: .
 
-name: "mmcr-tiny-linear"
-pretrained_feature_extractor: None
+name: "ivne-imagenet100-linear"
 backbone:
   name: "resnet18"
-pretrain_method: "mmcr"
+pretrain_method: "ivne"
 data:
-  dataset: tiny-imagenet
-  train_path: "./datasets/tiny-imagenet/tiny-imagenet-200/train"
-  val_path: "./datasets/tiny-imagenet/tiny-imagenet-200/test"
-  format: "image_folder"
-  num_workers: 8
+  dataset: imagenet100
+  train_path: "./datasets/imagenet100/train"
+  val_path: "./datasets/imagenet100/val"
+  format: "dali"
+  num_workers: 32
 optimizer:
   name: "sgd"
-  batch_size: 256
+  batch_size: 512
   lr: 0.1
   weight_decay: 0
 scheduler:
@@ -34,11 +33,11 @@ checkpoint:
   dir: "trained_models"
   frequency: 1
 auto_resume:
-  enabled: False
+  enabled: True
 
 # overwrite PL stuff
 max_epochs: 100
-devices: [0]
+devices: [0,1]
 sync_batchnorm: True
 accelerator: "gpu"
 strategy: "ddp"

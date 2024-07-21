@@ -3,15 +3,15 @@ import os
 import pickle
 import itertools
 
-#methods = ["frossl", "mmcr", "barlow", "simclr", "byol", "mocov2", "simsiam", "corinfomax", "vicreg", "swav", "wmse", "dino"]
-methods = ["frossl", "mmcr"]
+methods = ["frossl", "mmcr", "barlow", "simclr", "ivne", "byol", "mocov2", "simsiam", "corinfomax", "vicreg", "swav"]
+#methods = ["frossl", "mmcr", "ivne", "corinfomax"]
 multiaug_compatible_methods = ["frossl", "mmcr"]
 
-default_batch_size = 512
+default_batch_size = 1024
 default_proj_dim = 1024
 default_num_augs = 2
 
-batch_sizes_list = [512]
+batch_sizes_list = [1024]
 proj_dims_list = [1024]
 augs_list = [2, 4, 8]
 
@@ -70,8 +70,8 @@ for method_combo in combos:
         num_augs=str(num_augs)
 
         # check if run exists in total_run_stats
-        if filename_prefix in total_run_stats:
-            continue
+        # if filename_prefix in total_run_stats:
+        #     continue
 
         # check if log file already exists
         if not os.path.exists(f"logs/fit-{filename_prefix}.txt"):
@@ -80,7 +80,7 @@ for method_combo in combos:
 
         run_stats = parse_file(filename_prefix)
         total_run_stats[filename_prefix] = run_stats
-        print(method, run_stats)
+        print(method, filename_prefix, run_stats)
     except Exception as e:
         print(e)
 

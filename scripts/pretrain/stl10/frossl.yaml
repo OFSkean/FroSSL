@@ -20,7 +20,7 @@ method_kwargs:
   proj_output_dim: 1024
   alpha: 2
   kernel_type: "linear"
-  invariance_weight: 1.0
+  invariance_weight: 1.4
 
 data:
   dataset: stl10 # change here for cifar100
@@ -31,7 +31,7 @@ data:
 optimizer:
   name: "lars"
   batch_size: 256
-  lr: 0.3
+  lr: 0.1
   classifier_lr: 0.1
   weight_decay: 1e-4
   kwargs:

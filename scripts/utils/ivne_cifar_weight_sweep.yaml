@@ -1,6 +1,6 @@
 program: main_pretrain.py
 project: frossl-paper
-name: ivne_cifar100_sweep
+name: ivne_in100_sweep
 
 command:
   - ${env}
@@ -8,9 +8,7 @@ command:
   - ${program}
   - "--config-path=scripts/pretrain/cifar"
   - "--config-name=ivne.yaml"
-  - "++data.dataset=cifar100"
-  - "++data.train_path=./datasets/cifar10"
-  - "++data.val_path=./datasets/cifar10"
+  - "++data.dataset=imagenet100"
   - ${args_no_hyphens}
 
 method: grid

@@ -32,7 +32,9 @@ method_name_to_formatted = {
     "mocov2": "MoCoV2",
     "simclr": "SimCLR",
     "mmcr": "MMCR",
-    "vicreg": "VICReg"
+    "vicreg": "VICReg",
+    "ivne": "I-VNE",
+    "swav": "SWAV"
 }
 
 ordererd_keys = [
@@ -46,6 +48,7 @@ ordererd_keys = [
     "barlow",
     "wmse",
     "corinfomax",
+    "ivne",
     "mmcr",
     "frossl"
 ]

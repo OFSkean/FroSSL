@@ -153,12 +153,11 @@ class WMSE(BaseMethod):
 
 
         # ---- compute eigenvalues
-        if self.global_step < 2500 == 0:
-            all_z_a = out["z"][0]
-            centered_a = all_z_a - all_z_a.mean(dim=0)
+        if self.global_step < 2500:
+            centered_a = x0
             centered_covariance = (centered_a @ centered_a.T)
 
-            cov_eigs = torch.linalg.eigvalsh(centered_covariance + 1e-3 * torch.eye(centered_covariance.shape[0], device=centered_covariance.device))
+            cov_eigs = torch.linalg.eigvals(centered_covariance).real
             sorted_eigs = torch.sort(cov_eigs, descending=True).values
 
             logging_dict = {

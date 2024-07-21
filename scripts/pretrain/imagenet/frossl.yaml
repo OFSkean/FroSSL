@@ -1,6 +1,6 @@
 defaults:
   - _self_
-  - augmentations: symmetric.yaml
+  - augmentations: vicreg.yaml
   - wandb: private.yaml
   - override hydra/hydra_logging: disabled
   - override hydra/job_logging: disabled
@@ -20,12 +20,12 @@ method_kwargs:
   proj_output_dim: 1024
   alpha: 2
   kernel_type: "linear"
-  invariance_weight: 1.0
+  invariance_weight: 2.0
 
 data:
   dataset: imagenet
-  train_path: "./datasets/imagenet/train"
-  val_path: "./datasets/imagenet/val"
+  train_path: "./datasets/imagenet/ILSVRC/Data/CLS-LOC/train"
+  val_path: "./datasets/imagenet/ILSVRC/Data/CLS-LOC/val_sorted"
   format: "dali"
   num_workers: 8
 optimizer:

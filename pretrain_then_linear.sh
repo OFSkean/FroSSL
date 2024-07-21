@@ -10,8 +10,16 @@ CONFIG_NAME="${3:-searmse.yaml}" #third argument is dataset, default is searmse
 NUM_AUGMENTATIONS="$4"
 BACKBONE="resnet18"
 
-PRETRAIN_CONFIG_PATH="scripts/pretrain/$DATASET"
-LINEAR_CONFIG_PATH="scripts/linear/$DATASET"
+
+
+if [ "$DATASET" == "cifar10" ] || [ "$DATASET" == "cifar100" ]; then
+    dataset_config_name="cifar"
+else
+    dataset_config_name="$DATASET"
+fi
+
+PRETRAIN_CONFIG_PATH="scripts/pretrain/$dataset_config_name"
+LINEAR_CONFIG_PATH="scripts/pretrain/$dataset_config_name"
 
 echo "Preparing to start experiment with name $EXPERIMENT_NAME"
 echo "on dataset $DATASET"
@@ -28,7 +36,8 @@ python3 -u main_pretrain.py \
     --config-name $CONFIG_NAME \
     ++name="$EXPERIMENT_NAME" \
     ++backbone.name=$BACKBONE \
-    ++augmentations.0.num_crops=$NUM_AUGMENTATIONS \
+    ++data.dataset=$DATASET
+    #++augmentations.0.num_crops=$NUM_AUGMENTATIONS \
 
 # get pretrained path from last_ckpt.txt file
 TRAINED_CHECKPOINT_PATH=$(cat last_ckpt.txt)
@@ -41,4 +50,5 @@ echo "$TRAINED_CHECKPOINT_WANDB_ID $TRAINED_CHECKPOINT_PATH"
 python3 -u main_linear.py \
     --config-path $LINEAR_CONFIG_PATH \
     --config-name $CONFIG_NAME \
+    ++data.dataset=$DATASET \
     ++name="$EXPERIMENT_NAME-linear-$TRAINED_CHECKPOINT_WANDB_ID" \
