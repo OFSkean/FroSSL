@@ -11,7 +11,7 @@ hydra:
     dir: .
 
 name: "mocov2-stl10-linear"
-pretrained_feature_extractor: "/home/AD/ofsk222/Research/clones/solo-learn/trained_models/stl10_models/mocov2plus-stl10-h1om782q-ep=499.ckpt"
+pretrained_feature_extractor: None
 backbone:
   name: "resnet18"
 pretrain_method: "mocov2"

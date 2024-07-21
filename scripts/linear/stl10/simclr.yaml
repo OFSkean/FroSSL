@@ -11,7 +11,7 @@ hydra:
     dir: .
 
 name: "simclr-stl10-linear"
-pretrained_feature_extractor: "/home/AD/ofsk222/Research/clones/solo-learn/trained_models/stl10_models/simclr-stl10-w3i1c17d-ep=499.ckpt"
+pretrained_feature_extractor: None
 backbone:
   name: "resnet18"
 pretrain_method: "simclr"

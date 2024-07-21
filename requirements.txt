@@ -1,11 +1,12 @@
-torch>=1.10.0
+torch==2.0.1
 torchvision>=0.11.1
 einops
 lightning==2.1.2
-torchmetrics>=0.6.0, <0.12.0
+torchmetrics
 tqdm
 wandb
 scipy
 timm
 scikit-learn
 hydra-core
+-e git+https://github.com/uk-cliplab/representation-itl.git#egg=representation-itl

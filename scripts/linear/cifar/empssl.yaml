@@ -13,7 +13,7 @@ hydra:
 
 name: "empssl-cifar" # change here for cifar100
 pretrain_method: "empssl"
-pretrained_feature_extractor: "/home/AD/ofsk222/Research/clones/solo-learn/trained_models/empssl/l3tmegmp/empssl-cifar10-l3tmegmp-ep=0.ckpt"
+pretrained_feature_extractor: None
 
 backbone:
   name: "resnet18"
