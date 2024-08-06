@@ -107,13 +107,11 @@ class FroSSL(BaseMethod):
         class_loss = out["loss"]
         z = out["z"]
 
-        if len(z) == 2:
-            z1 = z[0]
-            z2 = z[1]
-            frossl_loss = frossl_loss_func(z1, z2, kernel_type=self.kernel_type, alpha=self.alpha, invariance_weight=self.invariance_weight, logger=self.log)
-        else:
-            frossl_loss = multiview_frossl_loss_func(z, invariance_weight=self.invariance_weight, logger=self.log)
-            
+        # note that our original implementation of training_step() called to 
+        # frossl_loss_func() if num_views==2, and to multiview_frossl_loss_func() otherwise.
+        # this current implemntation always calls to multiview_frossl_loss_func() regardless of the number of views.
+        # the results might differ slightly but in general the performance should be similar.
+        frossl_loss = multiview_frossl_loss_func(z, invariance_weight=self.invariance_weight, logger=self.log)
         self.log("train_frossl_loss", frossl_loss, on_epoch=True, sync_dist=True)
         
         return frossl_loss + class_loss
