@@ -3,11 +3,11 @@
 This is the official PyTorch implementation of the [FroSSL paper](https://arxiv.org/pdf/2310.02903):
 
 ```
-@article{skean2023frossl,
+@inproceedings{skean2024frossl,
   title={FroSSL: Frobenius Norm Minimization for Self-Supervised Learning},
-  author={Oscar Skean and Aayush Dhakal and Nathan Jacobs and Luis Gonzalo Sanchez Giraldo},
-  journal={arXiv preprint arXiv:2310.02903},
-  year={2023}
+  author={Skean, Oscar and Dhakal, Aayush and Jacobs, Nathan and Giraldo, Luis Gonzalo Sanchez},
+  booktitle={European Conference on Computer Vision},
+  year={2024}
 }
 ```
 This implementation started as a fork of the fantastic [solo-learn](https://github.com/vturrisi/solo-learn.git) library. We are currently working on a pull request to merge our contributions into the library.
