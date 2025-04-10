@@ -38,6 +38,9 @@ else:
     _umap_available = True
 
 
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+
 @hydra.main(version_base="1.2")
 def main(cfg: DictConfig):
     # hydra doesn't allow us to add new keys for "safety"
